@@ -4,6 +4,7 @@
     bottom:0 ;
     left:0;
     right:0;
+    margin-bottom: 5%;
 }
 
 /* Required for full background image */
@@ -12,7 +13,7 @@ html,
 body,
 header,
 .view {
-  height: 100%;
+  
 }
 
 @media (max-width: 740px) {
@@ -54,4 +55,3 @@ header,
 h6 {
   line-height: 1.7;
 }
-                
