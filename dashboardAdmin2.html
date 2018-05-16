@@ -56,7 +56,7 @@
                     <ul class="navbar-nav nav-flex-icons">
                       
                         <li class="nav-item">
-                            <a href="" class="nav-link border border-light rounded waves-effect"
+                            <a href="index.html" class="nav-link border border-light rounded waves-effect"
                                 target="_blank">
                                 <i class="fa fa-arrow-right "></i>Log Out
                             </a>
@@ -164,7 +164,7 @@
                             <table class="table table-hover  ">
                                 <!-- Table head -->
                                 <thead class="blue-grey lighten-4">
-                                  <h5>Registered Doctors</h5>
+                                  <h5>Registered Doctors<span><button type = "button" class = "btn-info btn btn-sm pull-right" data-toggle="modal" data-target="#exampleModal">Create new Doctor</button></span></h5>
                                     <tr>
                                         <th>#ID</th>
                                         <th>Name</th>
@@ -247,6 +247,38 @@
       </main>
       </div>
       </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create New Doctor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Doctor ID</label>
+                <input type="number" name="ID" readonly class ="form-control" placeholder="2345">
+                <br>
+                 <label>Name</label>
+                <input type="text" name="name" class ="form-control">
+                <br>
+                 <label>Email</label>
+                <input type="email" name="email" class ="form-control">
+                <br>
+                 <label>Type Of Doctor</label>
+                <input type="text" name="type" class ="form-control">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm  btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
       </body>
 
     </footer>
