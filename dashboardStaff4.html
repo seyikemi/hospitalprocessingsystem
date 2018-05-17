@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Hospital Management</title>
+    <title>Hospital Processing</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
@@ -18,7 +18,7 @@
 
 </head>
 
-<body class="grey lighten-3">
+<body class="grey lighten-3" style="overflow: hidden;">
 
     <!--Main Navigation-->
     <header>
@@ -28,7 +28,8 @@
             <div class="container-fluid">
 
                 <!-- Brand -->
-                <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/material-design-for-bootstrap/" target="_blank">                  <strong class="blue-text">Hospital Processing App</strong>
+                <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/material-design-for-bootstrap/" target="_blank">
+                  <strong class="blue-text">Hospital Processing App</strong>
                 </a> 
 
                 <!-- Collapse -->
@@ -77,11 +78,11 @@
         <!-- Sidebar -->
        </header>
 
-           <div class = "container-fluid">
+  <div class = "container-fluid">
              <div class = "row">
                  <div class = "col-lg-3" style =  "margin-top:5%">
                   <div class="list-group list-group-flush">
-                          <a href="dashboardStaff.html" class="list-group-item active waves-effect">
+                          <a href="dashboardStaff.html" class="list-group-item waves-effect">
                               <i class="fa fa-user-o mr-3"></i>Patient Record
                           </a>
                            <a href="dashboardStaff3.html" class="list-group-item  waves-effect">
@@ -89,7 +90,7 @@
                           </a>
                          
                 
-                          <a href="dashboardStaff4.html" class="list-group-item  list-group-item-action waves-effect">
+                          <a href="dashboardStaff4.html" class="list-group-item active list-group-item-action waves-effect">
                               <i class="fa fa-money mr-3"></i>Questionnaire</a>
                           <a href="#" class="list-group-item list-group-item-action waves-effect">
                                   <i class="fa fa-arrow-right mr-3"> Log Out</i>
@@ -97,6 +98,7 @@
                 </div>
               </div>
                  
+
 
  
     
@@ -115,15 +117,13 @@
 
                     <h4 class="mb-2 mb-sm-0 pt-1">
                         <a href="" target="_blank">Staff</a>
-                         <span>/</span>
-                        <span>Nurse</span>
                         <span>/</span>
-                        <span>Patient Record</span>
+                        <span>Questionnaire</span>
                     </h4>
 
                     <form class="d-flex justify-content-center">
                         <!-- Default input -->
-                        <input type="search" placeholder="Find a Patient" aria-label="Search" class="form-control">
+                        <input type="search" placeholder="Search Questionnaire" aria-label="Search" class="form-control">
                         <button class="btn btn-primary btn-sm my-0 p" type="submit">
                             <i class="fa fa-search"></i>
                         </button>
@@ -152,106 +152,66 @@
 
                 <!--Grid column-->
                 <div class="col-md-12 mb-4">
-                    <div class="card">
-    <div class="card-body">
 
-        <!--Table-->
-        <table class="table table-hover table-fixed" style="overflow-y: scroll; height: 500px;">
+                 <div class="card">
 
-            <!--Table head-->
-            <thead>
-                <tr>
-                    <th>#Patient ID</th>
-                    <th>First name</th>
-                    <th>Surname</th>
-                    <th>Phone number</th>
-                    <th>Address</th>
-                    <th>Last Admitted</th>
-                    <th>Doctor on Seat</th>
-                    <th></th>
-                    <th></th>
+                        <!--Card content-->
+                        <div class="card-body" style = "height: 450px; overflow-y: scroll ">
 
-                </tr>
-            </thead>
-            <!--Table head-->
+                            <ol>
+                                 <li>While using the app did you experience any problem<br><br>
+                                  <textarea type="text" name="" class="form-control" style="width: 45%">
+                                    
+                                  </textarea> 
+                                 </li>
+                                 <br>
+                                  <li>Do you have difficulties in access records<br><br>
+                                  <textarea type="text" name="" class="form-control" style="width: 45%">
+                                    
+                                  </textarea> 
+                                 </li>
+                                 <br>
+                                  <li>Did you notice any abnormalities<br><br>
+                                                                    <div class="form-check mb-4">
+                                      <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" >
+                                      <label class="form-check-label" for="exampleRadios1">
+                                          Yes
+                                      </label>
+                                  </div>
+                                  <div class="form-check mb-4">
+                                      <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+                                      <label class="form-check-label" for="exampleRadios2">
+                                          No
+                                      </label>
+                                  </div>
+                                  
+                                  </li>
+                                 <br>
+                                  <li>While using the app did you experience any problem...if you did please Share<br>
 
-            <!--Table body-->
-            <tbody>
-                <tr>
-                    <th scope="row">4567</th>
-                    <td>Seyike</td>
-                    <td>Sojirin</td>
-                    <td>08092046613</td>
-                    <td>18, natufe off bode thomas junction</td>
-                    <td>23-03-18</td>
-                    <td>Dr. Banira Chibueze</td>
-                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
-                    <td><a href = "dashboardStaff2.html" class = "btn btn-sm btn-success">Patient file</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">4567</th>
-                    <td>Seyike</td>
-                    <td>Sojirin</td>
-                    <td>08092046613</td>
-                    <td>18, natufe off bode thomas junction</td>
-                    <td>23-03-18</td>
-                    <td>Dr. Banira Chibueze</td>
-                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
-                    <td><a href = "dashboardStaff2.html" class = "btn btn-sm btn-success">Patient file</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">4567</th>
-                    <td>Seyike</td>
-                    <td>Sojirin</td>
-                    <td>08092046613</td>
-                    <td>18, natufe off bode thomas junction</td>
-                    <td>23-03-18</td>
-                    <td>Dr. Banira Chibueze</td>
-                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
-                    <td><a href = "dashboardStaff2.html" class = "btn btn-sm btn-success">Patient file</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">4567</th>
-                    <td>Seyike</td>
-                    <td>Sojirin</td>
-                    <td>08092046613</td>
-                    <td>18, natufe off bode thomas junction</td>
-                    <td>23-03-18</td>
-                    <td>Dr. Banira Chibueze</td>
-                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
-                    <td><a href = "dashboardStaff2.html" class = "btn btn-sm btn-success">Patient file</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">4567</th>
-                    <td>Seyike</td>
-                    <td>Sojirin</td>
-                    <td>08092046613</td>
-                    <td>18, natufe off bode thomas junction</td>
-                    <td>23-03-18</td>
-                    <td>Dr. Banira Chibueze</td>
-                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
-                    <td><a href = "dashboardStaff2.html" class = "btn btn-sm btn-success">Patient file</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">4567</th>
-                    <td>Seyike</td>
-                    <td>Sojirin</td>
-                    <td>08092046613</td>
-                    <td>18, natufe off bode thomas junction</td>
-                    <td>23-03-18</td>
-                    <td>Dr. Banira Chibueze</td>
-                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
-                    <td><a href = "dashboardStaff2.html" class = "btn btn-sm btn-success">Patient file</a></td>
-                </tr>
-            </tbody>
-            <!--Table body-->
+                                  <textarea type="text" name="" class="form-control" style="width: 45%">
+                                    
+                                  </textarea>
 
-        </table>
-        <!--Table-->
+                                 </li>
+                                 <br>
+                                  <li>Do you have any suggestions on how we serve you better<br><br>
+                                  <textarea type="text" name="" class="form-control" style="width: 45%">
+                                    
+                                  </textarea> 
+                                 </li>
+                                 <br>
 
-    </div>
-</div>
-          
+                            
+                             <!-- after adding new question the save becomes enable .....change disable to success -->
+                            <button class = "btn btn-sm  btn-info pull-right">Save & Send</button></span></li>
+                     
+
+                        </div>
+
+                    </div>
+                    <!--/.Card-->
+
                 </div>
                 <!--Grid column-->
 
@@ -282,6 +242,7 @@
         // Animations initialization
         new WOW().init();
     </script>
+
 
    
 
