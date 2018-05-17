@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Hospital management</title>
+    <title>Hospital Management</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
@@ -43,7 +43,7 @@
                     <!-- Left -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link waves-effect" href="#">Staff
+                            <a class="nav-link waves-effect" href="#">Doctor
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
@@ -81,15 +81,15 @@
              <div class = "row">
                  <div class = "col-lg-3" style =  "margin-top:5%">
                   <div class="list-group list-group-flush">
-                          <a href="dashboardStaff.html" class="list-group-item waves-effect">
+                          <a href="dashboardDoctor.html" class="list-group-item active waves-effect">
                               <i class="fa fa-user-o mr-3"></i>Patient Record
                           </a>
-                           <a href="dashboardStaff3.html" class="list-group-item active  waves-effect">
+                           <a href="dashboardDoctor3.html" class="list-group-item  waves-effect">
                               <i class="fa fa-money mr-3"></i>Bills <span class = "badge red pull-right"> 3 bills unpaid</span>
                           </a>
                          
                 
-                          <a href="dashboardStaff4.html" class="list-group-item  list-group-item-action waves-effect">
+                          <a href="dashboardDoctor4.html" class="list-group-item  list-group-item-action waves-effect">
                               <i class="fa fa-money mr-3"></i>Questionnaire</a>
                           <a href="index.html" class="list-group-item list-group-item-action waves-effect">
                                   <i class="fa fa-arrow-right mr-3"> Log Out</i>
@@ -114,10 +114,8 @@
                 <div class="card-body d-sm-flex justify-content-between">
 
                     <h4 class="mb-2 mb-sm-0 pt-1">
-                        <a href="" target="_blank">Staff</a>
+                        <a href="" target="_blank">Doctor</a>
                          <span>/</span>
-                        <span>Nurse</span>
-                        <span>/</span>
                         <span>Patient Record</span>
                     </h4>
 
@@ -166,10 +164,10 @@
                     <th>Surname</th>
                     <th>Phone number</th>
                     <th>Address</th>
-                    <th>Due Date of Payment</th>
-                    <th>Amount</th>
+                    <th>Last Admitted</th>
+                    <th>Doctor on Seat</th>
                     <th></th>
-             
+                    <th></th>
 
                 </tr>
             </thead>
@@ -184,8 +182,9 @@
                     <td>08092046613</td>
                     <td>18, natufe off bode thomas junction</td>
                     <td>23-03-18</td>
-                    <td class = "red-text">N3800</td>
-                    <td><button class = "btn btn-sm btn-danger">Send Reminder</button></td>
+                    <td>Dr. Banira Chibueze</td>
+                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
+                    <td><a href = "dashboardDoctor2.html" class = "btn btn-sm btn-success">Patient file</a></td>
                 </tr>
                 <tr>
                     <th scope="row">4567</th>
@@ -194,8 +193,9 @@
                     <td>08092046613</td>
                     <td>18, natufe off bode thomas junction</td>
                     <td>23-03-18</td>
-                    <td class = "red-text">N3800</td>
-                   <td><button class = "btn btn-sm btn-danger">Send Reminder</button></td>
+                    <td>Dr. Banira Chibueze</td>
+                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
+                    <td><a href = "dashboardDoctor2.html" class = "btn btn-sm btn-success">Patient file</a></td>
                 </tr>
                 <tr>
                     <th scope="row">4567</th>
@@ -204,12 +204,43 @@
                     <td>08092046613</td>
                     <td>18, natufe off bode thomas junction</td>
                     <td>23-03-18</td>
-                   <td class = "red-text">N3800</td>
-                    <td><button class = "btn btn-sm btn-danger">Send Reminder</button></td>
-             
+                    <td>Dr. Banira Chibueze</td>
+                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
+                    <td><a href = "dashboardDoctor2.html" class = "btn btn-sm btn-success">Patient file</a></td>
                 </tr>
-           
-          
+                <tr>
+                    <th scope="row">4567</th>
+                    <td>Seyike</td>
+                    <td>Sojirin</td>
+                    <td>08092046613</td>
+                    <td>18, natufe off bode thomas junction</td>
+                    <td>23-03-18</td>
+                    <td>Dr. Banira Chibueze</td>
+                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
+                    <td><a href = "dashboardDoctor2.html" class = "btn btn-sm btn-success">Patient file</a></td>
+                </tr>
+                <tr>
+                    <th scope="row">4567</th>
+                    <td>Seyike</td>
+                    <td>Sojirin</td>
+                    <td>08092046613</td>
+                    <td>18, natufe off bode thomas junction</td>
+                    <td>23-03-18</td>
+                    <td>Dr. Banira Chibueze</td>
+                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
+                    <td><a href = "dashboardDoctor2.html" class = "btn btn-sm btn-success">Patient file</a></td>
+                </tr>
+                <tr>
+                    <th scope="row">4567</th>
+                    <td>Seyike</td>
+                    <td>Sojirin</td>
+                    <td>08092046613</td>
+                    <td>18, natufe off bode thomas junction</td>
+                    <td>23-03-18</td>
+                    <td>Dr. Banira Chibueze</td>
+                    <td><button class = "btn btn-sm btn-danger">Delete</button></td>
+                    <td><a href = "dashboardDoctor2.html" class = "btn btn-sm btn-success">Patient file</a></td>
+                </tr>
             </tbody>
             <!--Table body-->
 
