@@ -4,7 +4,7 @@ USE `csc405testdb`;
 --
 -- Host: localhost    Database: csc405testdb
 -- ------------------------------------------------------
--- Server version	5.5.5-10.1.19-MariaDB
+-- Server version	5.5.5-10.0.17-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -37,6 +37,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
+INSERT INTO `admin` VALUES ('admin001','marshmellows'),('admin002','ilovehiro015'),('admin003','papaisabitch');
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,11 +51,11 @@ DROP TABLE IF EXISTS `admin_messages`;
 CREATE TABLE `admin_messages` (
   `ID` int(11) NOT NULL,
   `Feedback` varchar(10000) DEFAULT NULL,
-  `Sender` varchar(45) DEFAULT NULL,
+  `Sender` int(11) DEFAULT NULL,
   `Seen` varchar(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`ID`),
-  KEY `staff_message_fk_idx` (`Sender`),
-  CONSTRAINT `staff_message_fk` FOREIGN KEY (`Sender`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `employee_feedback_fk_idx` (`Sender`),
+  CONSTRAINT `employee_feedback_fk` FOREIGN KEY (`Sender`) REFERENCES `employee` (`Employee_ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -75,15 +76,15 @@ DROP TABLE IF EXISTS `adminfeedback`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `adminfeedback` (
-  `ID` int(11) NOT NULL,
+  `Feedback_ID` int(11) NOT NULL,
   `Question_ID` int(11) DEFAULT NULL,
   `Reply` varchar(1000) DEFAULT NULL,
-  `Staff_ID` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `staff_feedback_fk_idx` (`Staff_ID`),
-  KEY `questioniare_feedback_fk_idx` (`Question_ID`),
-  CONSTRAINT `questioniare_feedback_fk` FOREIGN KEY (`Question_ID`) REFERENCES `questioniare` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `staff_feedback_fk` FOREIGN KEY (`Staff_ID`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  `Staff_ID` int(11) DEFAULT NULL,
+  `Seen` varchar(45) DEFAULT 'N',
+  PRIMARY KEY (`Feedback_ID`),
+  KEY `question_feedback_fk_idx` (`Question_ID`),
+  KEY `employee_feedback_fk_idx` (`Staff_ID`),
+  CONSTRAINT `question_feedback_fk` FOREIGN KEY (`Question_ID`) REFERENCES `questioniare` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='handles responses to questioniare';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -113,13 +114,7 @@ CREATE TABLE `admission` (
   `Date_closed` date DEFAULT NULL,
   PRIMARY KEY (`addmissionid`),
   KEY `patient_admission_fk_idx` (`patientID`),
-  KEY `staff_admission_fk_idx` (`Admitting_staff`),
-  KEY `doctor_admission_fk_idx` (`Doctor_assigned`),
-  KEY `doctor1_admission_fk_idx` (`Last_doctor_assigned`),
-  CONSTRAINT `doctor1_admission_fk` FOREIGN KEY (`Last_doctor_assigned`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `doctor_admission_fk` FOREIGN KEY (`Doctor_assigned`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `patient_admission_fk` FOREIGN KEY (`patientID`) REFERENCES `patient` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `staff_admission_fk` FOREIGN KEY (`Admitting_staff`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `patient_admission_fk` FOREIGN KEY (`patientID`) REFERENCES `patient` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='handles the creation of and admission which would be tracked through out the attendance of a patient';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -129,8 +124,28 @@ CREATE TABLE `admission` (
 
 LOCK TABLES `admission` WRITE;
 /*!40000 ALTER TABLE `admission` DISABLE KEYS */;
+INSERT INTO `admission` VALUES ('AD4567','P1111','2018-05-22','1111','1111',NULL,NULL),('AD4568','P1112','2018-05-22','1113','1112','1111',NULL);
 /*!40000 ALTER TABLE `admission` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `admission_view`
+--
+
+DROP TABLE IF EXISTS `admission_view`;
+/*!50001 DROP VIEW IF EXISTS `admission_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `admission_view` AS SELECT 
+ 1 AS `addmissionID`,
+ 1 AS `patientID`,
+ 1 AS `Firstname`,
+ 1 AS `Surname`,
+ 1 AS `Date_admitted`,
+ 1 AS `Admitting_staff`,
+ 1 AS `Doctor_assigned`,
+ 1 AS `Last_doctor_assigned`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `appointments`
@@ -145,10 +160,8 @@ CREATE TABLE `appointments` (
   `patient_ID` varchar(45) DEFAULT NULL,
   `appointment_date` date DEFAULT NULL,
   PRIMARY KEY (`appointment_ID`),
-  KEY `staff_appointment_fk_idx` (`issuer`),
   KEY `patient_appointment_fk_idx` (`patient_ID`),
-  CONSTRAINT `patient_appointment_fk` FOREIGN KEY (`patient_ID`) REFERENCES `patient` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `staff_appointment_fk` FOREIGN KEY (`issuer`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `patient_appointment_fk` FOREIGN KEY (`patient_ID`) REFERENCES `patient` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='handles appointments with doctors';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -170,21 +183,16 @@ DROP TABLE IF EXISTS `billing`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `billing` (
   `billing_ID` int(11) NOT NULL,
-  `addmission_ID` varchar(45) NOT NULL,
+  `addmission_ID` varchar(45) DEFAULT NULL,
   `issuer` varchar(45) DEFAULT NULL,
-  `patient_ID` varchar(45) DEFAULT NULL,
   `Bill_Summary` varchar(45) DEFAULT NULL,
   `amount_payable` varchar(45) DEFAULT NULL,
   `issued_date` date DEFAULT NULL,
   `date_due` date DEFAULT NULL,
   `status` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`billing_ID`,`addmission_ID`),
+  PRIMARY KEY (`billing_ID`),
   KEY `admission_billing_fk_idx` (`addmission_ID`),
-  KEY `staff_billing_fk_idx` (`issuer`),
-  KEY `patient_billing_fk_idx` (`patient_ID`),
-  CONSTRAINT `admission_billing_fk` FOREIGN KEY (`addmission_ID`) REFERENCES `admission` (`addmissionid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `patient_billing_fk` FOREIGN KEY (`patient_ID`) REFERENCES `patient` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `staff_billing_fk` FOREIGN KEY (`issuer`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `admission_billing_fk` FOREIGN KEY (`addmission_ID`) REFERENCES `admission` (`addmissionid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='handles all forms of billing to a particular patient on a perticular admission';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -196,6 +204,27 @@ LOCK TABLES `billing` WRITE;
 /*!40000 ALTER TABLE `billing` DISABLE KEYS */;
 /*!40000 ALTER TABLE `billing` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `billing_view`
+--
+
+DROP TABLE IF EXISTS `billing_view`;
+/*!50001 DROP VIEW IF EXISTS `billing_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `billing_view` AS SELECT 
+ 1 AS `billingID`,
+ 1 AS `admissionID`,
+ 1 AS `patientID`,
+ 1 AS `Firstname`,
+ 1 AS `Surname`,
+ 1 AS `Summary`,
+ 1 AS `amount_payable`,
+ 1 AS `issued_date`,
+ 1 AS `date_due`,
+ 1 AS `issuer`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `diagnosis`
@@ -211,9 +240,7 @@ CREATE TABLE `diagnosis` (
   `doctor_ID` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `admission_diagnosis_fk_idx` (`admission_id`),
-  KEY `doctor_diagnosis_fk_idx` (`doctor_ID`),
-  CONSTRAINT `admission_diagnosis_fk` FOREIGN KEY (`admission_id`) REFERENCES `admission` (`addmissionid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `doctor_diagnosis_fk` FOREIGN KEY (`doctor_ID`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `admission_diagnosis_fk` FOREIGN KEY (`admission_id`) REFERENCES `admission` (`addmissionid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='keeps track of diagnosis details on a prticular admission';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -250,14 +277,14 @@ DROP TABLE IF EXISTS `employee`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `employee` (
-  `Staff_ID` varchar(45) NOT NULL,
+  `Employee_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Password` varchar(45) DEFAULT NULL,
-  `Staff_name` varchar(150) DEFAULT NULL,
+  `Employee_name` varchar(150) DEFAULT NULL,
   `Employee_email` varchar(45) DEFAULT NULL,
   `Designation` varchar(45) DEFAULT NULL,
   `Role` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`Staff_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='employee details';
+  PRIMARY KEY (`Employee_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1119 DEFAULT CHARSET=latin1 COMMENT='employee details';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -266,6 +293,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
+INSERT INTO `employee` VALUES (1111,'samuel','Samuel Boyega','boyegasam@gmail.com','doctor','Gynaecologist'),(1112,'peter123','Peter Quill','quillpeter@yahoo.com','doctor','Surgeon'),(1113,'annie202','Annie Black','annieb@gmail.com','staff','Nurse'),(1114,'natasharom1','Natasha Romanoff','blackwidow@shield.com','staff','Lab Scientist'),(1115,'okoyeP','Okoye N\'Jobu','doramilajeokoye@wakanda.com','staff','Pharmacist'),(1116,'fasipe422','Fasipe Timilehin','fasipert556@yahoo.com','staff','Ward Assistant'),(1118,'opemipoJ','Joda Opemipo','jodaopemipo@gmail.com','staff','Ward Assistant');
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -348,8 +376,27 @@ CREATE TABLE `patient` (
 
 LOCK TABLES `patient` WRITE;
 /*!40000 ALTER TABLE `patient` DISABLE KEYS */;
+INSERT INTO `patient` VALUES ('P1111','Erik','Kilmonger','1990-05-20','+2348156573541','In the Bushes of Africa, Wakanda','killmonger@yahoo.com','N\'Jaka','200kg','250cm','O+','AC','Out-Patient'),('P1112','Jerome','Valeska','1992-02-29','00000000000','Arkham Asylum','jerome@crazy.com','Batman','160kg','200cm','AB-','AA','Out-Patient');
 /*!40000 ALTER TABLE `patient` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `patient_view`
+--
+
+DROP TABLE IF EXISTS `patient_view`;
+/*!50001 DROP VIEW IF EXISTS `patient_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `patient_view` AS SELECT 
+ 1 AS `PatientID`,
+ 1 AS `Firstname`,
+ 1 AS `Surname`,
+ 1 AS `Phone_number`,
+ 1 AS `Address`,
+ 1 AS `E-mail`,
+ 1 AS `Status`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `priscriptions`
@@ -388,7 +435,6 @@ DROP TABLE IF EXISTS `questioniare`;
 CREATE TABLE `questioniare` (
   `ID` int(11) NOT NULL,
   `Question` varchar(150) DEFAULT NULL,
-  `Date_Created` date DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='admin questioniare';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -399,6 +445,7 @@ CREATE TABLE `questioniare` (
 
 LOCK TABLES `questioniare` WRITE;
 /*!40000 ALTER TABLE `questioniare` DISABLE KEYS */;
+INSERT INTO `questioniare` VALUES (1,'Did you experience problems with our system');
 /*!40000 ALTER TABLE `questioniare` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -414,9 +461,7 @@ CREATE TABLE `staff_message` (
   `Content` varchar(10000) DEFAULT NULL,
   `Staff_ID` varchar(45) DEFAULT NULL,
   `Seen` varchar(1) NOT NULL DEFAULT 'N',
-  PRIMARY KEY (`ID`),
-  KEY `message_staff_fk_idx` (`Staff_ID`),
-  CONSTRAINT `message_staff_fk` FOREIGN KEY (`Staff_ID`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='messages sent to staffs from admin or a staff';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -459,10 +504,8 @@ CREATE TABLE `tests` (
   `test_name` varchar(45) DEFAULT NULL,
   `test_result` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `admission_test_fk_idx` (`admission_id`),
-  KEY `staff_test_fk_idx` (`issuing_staff`),
-  CONSTRAINT `admission_test_fk` FOREIGN KEY (`admission_id`) REFERENCES `admission` (`addmissionid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `staff_test_fk` FOREIGN KEY (`issuing_staff`) REFERENCES `employee` (`Staff_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `admission_tests_fk_idx` (`admission_id`),
+  CONSTRAINT `admission_tests_fk` FOREIGN KEY (`admission_id`) REFERENCES `admission` (`addmissionid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='handles information about a test on a perticular patient on a particuler admission';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -474,6 +517,42 @@ LOCK TABLES `tests` WRITE;
 /*!40000 ALTER TABLE `tests` DISABLE KEYS */;
 /*!40000 ALTER TABLE `tests` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Final view structure for view `admission_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `admission_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `admission_view` AS select `ad`.`addmissionid` AS `addmissionID`,`ad`.`patientID` AS `patientID`,`p`.`Firstname` AS `Firstname`,`p`.`Surname` AS `Surname`,`ad`.`Date_admitted` AS `Date_admitted`,(select `employee`.`Employee_name` from `employee` where (`employee`.`Employee_ID` = `ad`.`Admitting_staff`)) AS `Admitting_staff`,(select `employee`.`Employee_name` from `employee` where (`employee`.`Employee_ID` = `ad`.`Doctor_assigned`)) AS `Doctor_assigned`,(select `employee`.`Employee_name` from `employee` where ((`ad`.`Last_doctor_assigned` is not null) and (`employee`.`Employee_ID` = `ad`.`Last_doctor_assigned`))) AS `Last_doctor_assigned` from (`admission` `ad` join `patient` `p`) where (`ad`.`patientID` = `p`.`ID`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `billing_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `billing_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `billing_view` AS select `bill`.`billing_ID` AS `billingID`,`bill`.`addmission_ID` AS `admissionID`,`ad`.`patientID` AS `patientID`,`p`.`Firstname` AS `Firstname`,`p`.`Surname` AS `Surname`,`bill`.`Bill_Summary` AS `Summary`,`bill`.`amount_payable` AS `amount_payable`,`bill`.`issued_date` AS `issued_date`,`bill`.`date_due` AS `date_due`,`bill`.`issuer` AS `issuer` from ((`billing` `bill` join `admission` `ad`) join `patient` `p`) where ((`bill`.`addmission_ID` = `ad`.`addmissionid`) and (`ad`.`patientID` = `p`.`ID`) and (`bill`.`status` = 'not paid')) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
 -- Final view structure for view `doctor_view`
@@ -488,7 +567,25 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `doctor_view` AS select `employee`.`Staff_ID` AS `Doctor_ID`,`employee`.`Password` AS `Password`,`employee`.`Staff_name` AS `Doctor_name`,`employee`.`Employee_email` AS `Doctor_email`,`employee`.`Role` AS `Type` from `employee` where (`employee`.`Designation` = 'doctor') */;
+/*!50001 VIEW `doctor_view` AS select `employee`.`Employee_ID` AS `Doctor_ID`,`employee`.`Password` AS `Password`,`employee`.`Employee_name` AS `Doctor_name`,`employee`.`Employee_email` AS `Doctor_email`,`employee`.`Role` AS `Type` from `employee` where (`employee`.`Designation` = 'doctor') */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `patient_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `patient_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `patient_view` AS select `patient`.`ID` AS `PatientID`,`patient`.`Firstname` AS `Firstname`,`patient`.`Surname` AS `Surname`,`patient`.`Phone_number` AS `Phone_number`,`patient`.`Address` AS `Address`,`patient`.`E-mail` AS `E-mail`,`patient`.`Status` AS `Status` from `patient` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -506,7 +603,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `staff_view` AS select `employee`.`Staff_ID` AS `Staff_ID`,`employee`.`Password` AS `Password`,`employee`.`Staff_name` AS `Staff_name`,`employee`.`Employee_email` AS `Staff_email`,`employee`.`Role` AS `Position` from `employee` where (`employee`.`Designation` = 'staff') */;
+/*!50001 VIEW `staff_view` AS select `employee`.`Employee_ID` AS `Staff_ID`,`employee`.`Password` AS `Password`,`employee`.`Employee_name` AS `Staff_name`,`employee`.`Employee_email` AS `Staff_email`,`employee`.`Role` AS `Position` from `employee` where (`employee`.`Designation` = 'staff') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -520,4 +617,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-20 17:36:13
+-- Dump completed on 2018-05-22 18:43:00

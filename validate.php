@@ -9,7 +9,7 @@ function adminValidate($username, $password){
     if($query->execute()){
         if($query->fetchColumn() == 0) {
             echo '<script>alert("Invalid Login Details")</script>';
-            echo '<script>window.location="Admin.html"</script>'; 
+            echo '<script>window.location="Admin.php"</script>'; 
             }else{
                 session_start();
                 $_SESSION['username'] = $username;
@@ -28,7 +28,7 @@ function doctorValidate($username, $password){
         if($query->execute()){
             if($query->fetchColumn() == 0) {
                 echo '<script>alert("Invalid Login Details")</script>';
-                echo '<script>window.location="Doctor.html"</script>'; 
+                echo '<script>window.location="Doctor.php"</script>'; 
             }else{
                 session_start();
                 $_SESSION['doctor'] = $username;
@@ -37,7 +37,7 @@ function doctorValidate($username, $password){
         }
     }else{
         echo '<script>alert("Invalid Login Details")</script>';
-        echo '<script>window.location="Doctor.html"</script>';
+        echo '<script>window.location="Doctor.php"</script>';
     }
 }
 
@@ -51,7 +51,7 @@ function staffValidate($username, $password){
         if($query->execute()){
             if($query->fetchColumn() == 0) {
                 echo '<script>alert("Invalid Login Details")</script>';
-                echo '<script>window.location="Staff.html"</script>';  
+                echo '<script>window.location="Staff.php"</script>';  
             }else{
                 session_start();
                 $_SESSION['staff'] = $username;
@@ -60,7 +60,7 @@ function staffValidate($username, $password){
         }
     }else{
         echo '<script>alert("Invalid Login Details")</script>';
-        echo '<script>window.location="Staff.html"</script>';
+        echo '<script>window.location="Staff.php"</script>';
     }
 }
 

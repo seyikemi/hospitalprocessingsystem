@@ -2,20 +2,38 @@
 require_once("pdo.php");
     session_start();
 
+    if(!isset($_SESSION['doctor'])){
+        header("Location:Doctor.php");
+    }
+
     function allQuestionaire(){
         global $conn;
+        $doc = $_SESSION['doctor'];
         $output = '';
         $sql = "SELECT * FROM `questioniare`";
         $query = $conn->query($sql);
         $result = $query->fetchAll();
         foreach ($result as $row) {
             $output .= '
-                        <li>'.$row["Question"].'<br><br>
-                        <textarea type="text" name="" class="form-control" style="width: 45%">
-                        </textarea></li>
-                        <br>';
+            <form action="DoctorClass.php" method="post">
+                        <p>'.$row['ID'].'. '.$row["Question"].'</p>
+                        <input type="text" name="reply" class="form-control" required>
+                        </textarea>
+                        <input type="hidden" name="id" value='.$row['ID'].'>
+                        <input type="hidden" name="doc" value='.$doc.'>
+                        <input type="submit" class="btn btn-sm  btn-info pull-right" name="submitQ" value="Save & Send">
+                        </form>';
         }
         return $output;
+    }
+
+    function numBills(){
+        global $conn;
+        $count = $conn->prepare("SELECT COUNT(*) FROM `billing_view`");
+        if($count->execute()){
+            $numBills = $count->fetchColumn();
+        }
+        return $numBills;
     }
 ?>
 
@@ -48,7 +66,7 @@ require_once("pdo.php");
             <div class="container-fluid">
 
                 <!-- Brand -->
-                <a class="navbar-brand waves-effect" href="index.php">
+                <a class="navbar-brand waves-effect" href="#">
                     <strong class="blue-text">Hospital Processing App</strong>
                 </a>
 
@@ -74,7 +92,7 @@ require_once("pdo.php");
                     <ul class="navbar-nav nav-flex-icons">
 
                         <li class="nav-item">
-                            <a href="index.php" class="nav-link border border-light rounded waves-effect">
+                            <a href="Doctor.php" class="nav-link border border-light rounded waves-effect">
                                 <i class="fa fa-arrow-right "></i>Log Out
                             </a>
                         </li>
@@ -107,13 +125,16 @@ require_once("pdo.php");
                         <i class="fa fa-user-o mr-3"></i>Patient Records
                     </a>
                     <a href="dashboardDoctor3.php" class="list-group-item  waves-effect">
-                        <i class="fa fa-money mr-3"></i>Bills <span class="badge red pull-right"> 3 bills unpaid</span>
+                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"><?= numBills(); ?></span>
                     </a>
 
 
                     <a href="dashboardDoctor4.php" class="list-group-item active list-group-item-action waves-effect">
-                        <i class="fa fa-money mr-3"></i>Questionnaire</a>
-                    <a href="index.php" class="list-group-item list-group-item-action waves-effect">
+                        <i class="fa fa-question mr-3"></i>Questionnaire</a>
+                        <a href="dashboardDoctor7.php" class="list-group-item list-group-item-action waves-effect">
+                        <i class="fa fa-envelope mr-3"></i>Messages
+                    </a>
+                    <a href="Doctor.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-arrow-right mr-3"> Log Out</i>
                     </a>
                 </div>
@@ -170,12 +191,10 @@ require_once("pdo.php");
                             <!--Card content-->
                             <div class="card-body" style="height: 450px; overflow-y: scroll ">
 
-                                <ol>
                                     <?php echo allQuestionaire(); ?>
 
-                                </ol>
                                     <!-- after adding new question the save becomes enable .....change disable to success -->
-                                    </span><button class="btn btn-sm  btn-info pull-right">Save & Send</button></span>
+                                    
 
 
                             </div>

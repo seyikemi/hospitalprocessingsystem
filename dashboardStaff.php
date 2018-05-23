@@ -2,6 +2,10 @@
     require_once('pdo.php');
     session_start();
 
+    if(!isset($_SESSION['staff'])){
+        header("Location:Staff.php");
+    }
+
     function allAdmissions(){
         global $conn;
         $output = '';
@@ -17,12 +21,21 @@
                             <td>'.$row['Admitting_staff'].'</td>
                             <td>Dr. '.$row['Doctor_assigned'].'</td>
                             <td>'.$row['Last_doctor_assigned'].'</td>
-                            <td><button class="btn btn-sm btn-danger">Checkout</button></td>
-                            <td><a href="dashboardDoctor2.php" class="btn btn-sm btn-success">Patient file</a></td>
+                            <td><a href=StaffClass.php?admissionid='.$row['addmissionID'].'&patientid='.$row['patientID'].' class="btn btn-sm btn-danger">Checkout</a></td>
+                            <td><a href=dashboardStaff6.php?admissionid='.$row['addmissionID'].'&patientid='.$row['patientID'].' class="btn btn-sm btn-success">Patient file</a></td>
                         </tr>
             ';
         }
         return $output;
+    }
+
+    function numBills(){
+        global $conn;
+        $count = $conn->prepare("SELECT COUNT(*) FROM `billing_view`");
+        if($count->execute()){
+            $numBills = $count->fetchColumn();
+        }
+        return $numBills;
     }
 ?>
 
@@ -55,7 +68,7 @@
             <div class="container-fluid">
 
                 <!-- Brand -->
-                <a class="navbar-brand waves-effect" href="index.php"> <strong class="blue-text">Hospital Processing App</strong>
+                <a class="navbar-brand waves-effect" href="#"> <strong class="blue-text">Hospital Processing App</strong>
                 </a>
 
                 <!-- Collapse -->
@@ -80,7 +93,7 @@
                     <ul class="navbar-nav nav-flex-icons">
 
                         <li class="nav-item">
-                            <a href="index.php" class="nav-link border border-light rounded waves-effect">
+                            <a href="Staff.php" class="nav-link border border-light rounded waves-effect">
                                 <i class="fa fa-arrow-right "></i>Log Out
                             </a>
                         </li>
@@ -113,13 +126,16 @@
                         <i class="fa fa-user-o mr-3"></i>Patient Record
                     </a>
                     <a href="dashboardStaff3.php" class="list-group-item  waves-effect">
-                        <i class="fa fa-money mr-3"></i>Bills <span class="badge red pull-right"> 3 bills unpaid</span>
+                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"> <?php echo numBills()?> </span>
                     </a>
 
 
                     <a href="dashboardStaff4.php" class="list-group-item  list-group-item-action waves-effect">
                         <i class="fa fa-question mr-3"></i>Questionnaire</a>
-                    <a href="index.php" class="list-group-item list-group-item-action waves-effect">
+                        <a href="dashboardStaff7.php" class="list-group-item list-group-item-action waves-effect">
+                        <i class="fa fa-envelope mr-3"></i>Messages
+                    </a>
+                    <a href="Staff.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-arrow-right mr-3"> Log Out</i>
                     </a>
                 </div>
@@ -156,14 +172,7 @@
                                 <span>Patient Record</span>
                             </h4>
 
-                            <form class="d-flex justify-content-center">
-                                <!-- Default input -->
-                                <input type="search" placeholder="Find a Patient" aria-label="Search" class="form-control">
-                                <button class="btn btn-primary btn-sm my-0 p" type="submit">
-                            <i class="fa fa-search"></i>
-                        </button>
-
-                            </form>
+                           
 
                         </div>
 

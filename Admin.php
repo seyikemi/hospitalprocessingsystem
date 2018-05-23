@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    session_unset();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,27 +24,28 @@
 
     <!-- Start your project here-->
     <nav class="navbar navbar-expand-lg navbar-dark primary-color">
-        <a class="navbar-brand" href="index.php">Hospital Management System</a>
+        <a class="navbar-brand" href="index.html">Hospital Management System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="index.php">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Admin.html">Admin</a>
+                    <a class="nav-link" href="index.html">Home</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="Doctor.html">Doctor <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="Admin.php">Admin <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="Staff.html">Staff</a>
+                    <a class="nav-link" href="Doctor.php">Doctor</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Staff.php">Staff</a>
                 </li>
             </ul>
         </div>
     </nav>
+
 
 
 
@@ -54,7 +59,7 @@
                 <!--Header-->
                 <div class="modal-header primary-color white-text">
                     <h4 class="title">
-                        <i class="fa fa-pencil"></i>Doctor Login</h4>
+                        <i class="fa fa-pencil"></i>Admin Login</h4>
 
                 </div>
                 <!--Body-->
@@ -62,20 +67,17 @@
                     <div class="modal-body">
 
                         <!-- Default input name -->
-                        <label for="defaultFormNameModalEx">Doctor ID</label>
-                        <input type="text" id="defaultFormNameModalEx" name="DocID" class="form-control form-control-sm">
+                        <label for="defaultFormNameModalEx">Admin ID</label>
+                        <input type="text" id="defaultFormNameModalEx" name="AdminID" class="form-control form-control-sm">
 
                         <br>
-
-
-
 
 
                         <label for="defaultFormMessageModalEx">Password</label>
                         <input type="password" id="defaultFormpasswordModalEx" name="password" class=" form-control"></input>
 
                         <div class="text-center mt-4 mb-2">
-                            <input type="submit" value="Login" class="btn btn-primary" name="DocSubmit" style="height: 46.879999999999995px;">
+                            <input type="submit" value="Login" class="btn btn-primary" name="AdminSubmit" style="height: 46.879999999999995px;">
                             <i class="fa fa-send ml-2"></i>
                         </div>
 
@@ -125,7 +127,7 @@
         <!--Copyright-->
         <div class="footer-copyright py-3 text-center">
             © 2018 Copyright:
-
+            <a href="https://mdbootstrap.com/material-design-for-bootstrap/"> MDBootstrap.com </a>
         </div>
         <!--/Copyright-->
 

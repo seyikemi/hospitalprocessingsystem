@@ -1,3 +1,8 @@
+<?php
+
+    session_start();
+    session_unset();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,23 +25,23 @@
 
     <!-- Start your project here-->
     <nav class="navbar navbar-expand-lg navbar-dark primary-color">
-        <a class="navbar-brand" href="index.php">Hospital Management System</a>
+        <a class="navbar-brand" href="index.html">Hospital Management System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="index.php">Home</a>
+                    <a class="nav-link" href="index.html">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="Admin.html">Admin</a>
+                    <a class="nav-link" href="Admin.php">Admin</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="Doctor.html">Doctor</a>
+                    <a class="nav-link" href="Doctor.hphptml">Doctor</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="Staff.html">Staff <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="Staff.php">Staff <span class="sr-only">(current)</span></a>
                 </li>
             </ul>
         </div>

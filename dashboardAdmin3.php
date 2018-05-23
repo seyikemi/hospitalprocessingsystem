@@ -2,6 +2,10 @@
     require_once('pdo.php');
     session_start();
 
+    if(!isset($_SESSION['username'])){
+        header("Location:Admin.php");
+    }
+
     function allStaffs(){
         global $conn;
         $output = '';
@@ -49,7 +53,7 @@
             <div class="container-fluid">
 
                 <!-- Brand -->
-                <a class="navbar-brand waves-effect" href="index.php">
+                <a class="navbar-brand waves-effect" href="#">
                     <strong class="blue-text">Hospital Processing App</strong>
                 </a>
 
@@ -76,7 +80,7 @@
                     <ul class="navbar-nav nav-flex-icons">
 
                         <li class="nav-item">
-                            <a href="index.php" class="nav-link border border-light rounded waves-effect">
+                            <a href="Admin.php" class="nav-link border border-light rounded waves-effect">
                                 <i class="fa fa-arrow-right "></i>Log Out
                             </a>
                         </li>
@@ -112,8 +116,11 @@
                         <i class="fa fa-table mr-3"></i>Staffs</a>
 
                     <a href="dashboardAdmin4.php" class="list-group-item list-group-item-action waves-effect">
-                        <i class="fa fa-money mr-3"></i>Questionnaire</a>
-                    <a href="index.php" class="list-group-item list-group-item-action waves-effect">
+                        <i class="fa fa-question mr-3"></i>Questionnaire</a>
+                        <a href="dashboardAdmin5.php" class="list-group-item list-group-item-action waves-effect">
+                        <i class="fa fa-envelope mr-3"></i>Messages
+                    </a>
+                    <a href="Admin.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-arrow-right mr-3"> Log Out</i>
                     </a>
                 </div>
@@ -141,14 +148,7 @@
                                 <span>Staffs</span>
                             </h4>
 
-                            <form class="d-flex justify-content-center">
-                                <!-- Default input -->
-                                <input type="search" placeholder="Search by name, ID" aria-label="Search" class="form-control">
-                                <button class="btn btn-primary btn-sm my-0 p" type="submit">
-                            <i class="fa fa-search"></i>
-                        </button>
-
-                            </form>
+                            
 
                         </div>
 

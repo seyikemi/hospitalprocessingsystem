@@ -2,19 +2,11 @@
     require_once('pdo.php');
     session_start();
 
-    if(!isset($_SESSION['staff'])){
-        header("Location:Staff.php");
+    if(!isset($_SESSION['doctor'])){
+        header("Location:Doctor.php");
     }
 
-    function numBills(){
-        global $conn;
-        $count = $conn->prepare("SELECT COUNT(*) FROM `billing_view`");
-        if($count->execute()){
-            $numBills = $count->fetchColumn();
-        }
-        return $numBills;
-    }
-        if(isset($_GET['PatientID'])){
+    if(isset($_GET['PatientID'])){
         $patient = $_GET['PatientID'];
         global $conn;
         $output = "";
@@ -83,6 +75,15 @@
                                 }
         return $output;
     }
+
+    function numBills(){
+        global $conn;
+        $count = $conn->prepare("SELECT COUNT(*) FROM `billing_view`");
+        if($count->execute()){
+            $numBills = $count->fetchColumn();
+        }
+        return $numBills;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -128,7 +129,7 @@
                     <!-- Left -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link waves-effect" href="#">Staff
+                            <a class="nav-link waves-effect" href="#">Doctor
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
@@ -139,7 +140,7 @@
                     <ul class="navbar-nav nav-flex-icons">
 
                         <li class="nav-item">
-                            <a href="Staff.php" class="nav-link border border-light rounded waves-effect">
+                            <a href="Doctor.php" class="nav-link border border-light rounded waves-effect">
                                 <i class="fa fa-arrow-right "></i>Log Out
                             </a>
                         </li>
@@ -165,26 +166,35 @@
         <div class="row">
             <div class="col-lg-3" style="margin-top:5%">
                 <div class="list-group list-group-flush">
-                    <a href="dashboardStaff.php" class="list-group-item  waves-effect">
+                    <a href="dashboardDoctor.php" class="list-group-item  waves-effect">
                         <i class="fa fa-user mr-3"></i>Admitted Patients
                     </a>
-                    <a href="dashboardStaff5.php" class="list-group-item active waves-effect">
-                        <i class="fa fa-user-o mr-3"></i>Patient Record
+                    <a href="dashboardDoctor5.php" class="list-group-item active waves-effect">
+                        <i class="fa fa-user-o mr-3"></i>Patient Records
                     </a>
-                    <a href="dashboardStaff3.php" class="list-group-item  waves-effect">
-                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"> <?php echo numBills()?> </span>
+                    <a href="dashboardDoctor3.php" class="list-group-item   waves-effect">
+                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"><?= numBills(); ?></span>
                     </a>
 
 
 
-                    <a href="dashboardStaff4.php" class="list-group-item  list-group-item-action waves-effect">
-                        <i class="fa fa-question mr-3"></i>Questionnaire</a>
-                        <a href="dashboardStaff7.php" class="list-group-item list-group-item-action waves-effect">
+                    <a href="dashboardDoctor4.php" class="list-group-item  list-group-item-action waves-effect">
+                        <href="#" i class="fa fa-question mr-3">
+                            </i>Questionnaire</a>
+                            <a href="dashboardDoctor7.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-envelope mr-3"></i>Messages
                     </a>
-                    <a href="Staff.php" class="list-group-item list-group-item-action waves-effect">
+                    <a href="Doctor.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-arrow-right mr-3"> Log Out</i>
                     </a>
+                </div>
+                <div class="white px-3 py-3 mt-4 ">
+                    <label>Can't Rememnber something, then google it</label>
+                    <input type="search" name="" class="form-control" placeholder="find...">
+                    <div class="text-center">
+                        <button class="btn-warning btn btn-md ">Search</button>
+                    </div>
+
                 </div>
             </div>
 
@@ -205,10 +215,9 @@
                         <div class="card-body d-sm-flex justify-content-between">
 
                             <h4 class="mb-2 mb-sm-0 pt-1">
-                                <a href=""><?php echo $_SESSION['staff']; ?></a>
+                                <a href=""><?php echo $_SESSION['doctor']; ?></a>
                                 <span>/</span>
-                                <span>Nurse</span>
-                                <span>/</span>
+
                                 <span>Patient Record</span>
                                 <span>/</span>
                                 <span><?= $name ?></span>
@@ -244,7 +253,7 @@
 
                                 <div style="border: 1px solid blue; padding: 10px;" class="">
                                 <h4>Update Patient Record</h4>
-                    <form action="StaffClass.php" method="post">
+                    <form action="DoctorClass.php" method="post">
                     <div class="modal-body">
                     <label>Firstname</label>
                     <input type="text" name="fname" class="form-control">
@@ -296,6 +305,8 @@
 
                                 </div>
                             </div>
+                        </div>
+
                     </div>
                     <!--Grid column-->
 

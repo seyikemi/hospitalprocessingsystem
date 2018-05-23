@@ -1,5 +1,80 @@
 <?php
+    require_once('pdo.php');
     session_start();
+
+    if(!isset($_SESSION['doctor'])){
+        header("Location:Doctor.php");
+    }
+
+    function allBills(){
+        global $conn;
+        $output = "";
+        $sql = "SELECT * FROM `billing_view`";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach($result as $row){
+            $output .= '
+                 <tr>
+                    <th scope="row">'.$row['patientID'].'</th>
+                    <td>'.$row['Firstname'].'</td>
+                    <td>'.$row['Surname'].'</td>
+                    <td>'.$row['Mobile_number'].'</td>
+                    <td>'.$row['Contact_address'].'</td>
+                    <td>'.$row['date_due'].'</td>
+                    <td class="red-text">N'.$row['amount_payable'].'</td>
+                    <td><a data-toggle="modal" data-target="#RemindPatient" class="btn btn-sm btn-danger">Send Reminder</a></td>
+                    <td><a href=DoctorClass.php?action=clear&billingID='.$row['billingID'].'&admissionID='.$row['admissionID'].' class="btn btn-sm btn-primary">Clear Bill</a></td>
+                </tr>
+            ';
+        }
+        return $output;
+    }
+
+    function numBills(){
+        global $conn;
+        $count = $conn->prepare("SELECT COUNT(*) FROM `billing_view`");
+        if($count->execute()){
+            $numBills = $count->fetchColumn();
+        }
+        return $numBills;
+    }
+    
+    function remainderLetter(){
+        global $conn;
+        $output = "";
+        $sql = "SELECT * FROM `billing_view`";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach($result as $row){
+            $output .= '
+                <p class="pull-left red-text" id="admissionid">'.$row['admissionID'].'</p>
+                                <p class="pull-right red-text" id="patientid">'.$row['patientID'].'</p>
+                                <h3 class="text-center blue-text pb-3">Payment Reminder</h3>
+                                <p>Date:<span class="red-text pl-3">'.date('Y-m-d').'</span> </p>
+                                <h3 class="text-center blue-text pb-3">'.$row['Firstname'].' '.$row['Surname'].'</h3>
+                                    <div>
+                                        <address class="black-text">'.$row['Contact_address'].'
+                                            <p>'.$row['Email'].'</p>
+                                            <p>'.$row['Mobile_number'].'</p>
+                                        </address>
+                            <p>Dear '.$row['Firstname'].' '.$row['Surname'].'</p>
+
+                                    </div>
+                                    <div>
+                                        <p>You have an outstanding bill '.$row['Summary'].' valued at N'.$row['amount_payable'].' to be paid on or before '.$row['date_due'].'</p>
+                                        <p>Please ensure to pay your blls</p>
+                                    </div>
+                                    <div>
+                                        <p>Yours Sincerely</p>
+                                        <p>Akoka Medical Centre</span> </p>
+                                        <p>No 234, Univeristy road, Akoka</p>
+                                        <p>0903356132</p>
+                                        <p>info@akokamedical.com</p>
+                                    </div>
+            ';
+        }
+        return $output;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +106,7 @@
             <div class="container-fluid">
 
                 <!-- Brand -->
-                <a class="navbar-brand waves-effect" href="index.php"> <strong class="blue-text">Hospital Processing App</strong>
+                <a class="navbar-brand waves-effect" href="#"> <strong class="blue-text">Hospital Processing App</strong>
                 </a>
 
                 <!-- Collapse -->
@@ -56,7 +131,7 @@
                     <ul class="navbar-nav nav-flex-icons">
 
                         <li class="nav-item">
-                            <a href="index.php" class="nav-link border border-light rounded waves-effect">
+                            <a href="Doctor.php" class="nav-link border border-light rounded waves-effect">
                                 <i class="fa fa-arrow-right "></i>Log Out
                             </a>
                         </li>
@@ -89,13 +164,16 @@
                         <i class="fa fa-user-o mr-3"></i>Patient Records
                     </a>
                     <a href="dashboardDoctor3.php" class="list-group-item active  waves-effect">
-                        <i class="fa fa-money mr-3"></i>Bills <span class="badge red pull-right"> 3 bills unpaid</span>
+                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"><?= numBills(); ?></span>
                     </a>
 
 
                     <a href="dashboardDoctor4.php" class="list-group-item  list-group-item-action waves-effect">
-                        <i class="fa fa-money mr-3"></i>Questionnaire</a>
-                    <a href="index.php" class="list-group-item list-group-item-action waves-effect">
+                        <i class="fa fa-question mr-3"></i>Questionnaire</a>
+                        <a href="dashboardDoctor7.php" class="list-group-item list-group-item-action waves-effect">
+                        <i class="fa fa-envelope mr-3"></i>Messages
+                    </a>
+                    <a href="Doctor.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-arrow-right mr-3"> Log Out</i>
                     </a>
                 </div>
@@ -121,17 +199,10 @@
                                 <a href=""><?php echo $_SESSION['doctor']; ?></a>
                                 <span>/</span>
 
-                                <span>Patient Record</span>
+                                <span>Bill Record</span>
                             </h4>
 
-                            <form class="d-flex justify-content-center">
-                                <!-- Default input -->
-                                <input type="search" placeholder="Find a Patient" aria-label="Search" class="form-control">
-                                <button class="btn btn-primary btn-sm my-0 p" type="submit">
-                            <i class="fa fa-search"></i>
-                        </button>
-
-                            </form>
+                            
 
                         </div>
 
@@ -180,37 +251,7 @@
 
                                     <!--Table body-->
                                     <tbody>
-                                        <tr>
-                                            <th scope="row">4567</th>
-                                            <td>Seyike</td>
-                                            <td>Sojirin</td>
-                                            <td>08092046613</td>
-                                            <td>18, natufe off bode thomas junction</td>
-                                            <td>23-03-18</td>
-                                            <td class="red-text">N3800</td>
-                                            <td><button class="btn btn-sm btn-danger">Send Reminder</button></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">4567</th>
-                                            <td>Seyike</td>
-                                            <td>Sojirin</td>
-                                            <td>08092046613</td>
-                                            <td>18, natufe off bode thomas junction</td>
-                                            <td>23-03-18</td>
-                                            <td class="red-text">N3800</td>
-                                            <td><button class="btn btn-sm btn-danger">Send Reminder</button></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">4567</th>
-                                            <td>Seyike</td>
-                                            <td>Sojirin</td>
-                                            <td>08092046613</td>
-                                            <td>18, natufe off bode thomas junction</td>
-                                            <td>23-03-18</td>
-                                            <td class="red-text">N3800</td>
-                                            <td><button class="btn btn-sm btn-danger">Send Reminder</button></td>
-
-                                        </tr>
+                                        <?= allBills(); ?>
 
 
                                     </tbody>
@@ -233,6 +274,30 @@
             </main>
         </div>
     </div>
+
+    <!--Remainder modal-->
+    <div class="modal fade" id="RemindPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="RemindPatientLabel">Remainder</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+            <form action="DoctorClass.php?action=reminder" method="post">
+                <div class="modal-body">
+                    <?php echo remainderLetter(); ?>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="remindPatient" value="Send">
+                    <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </footer>

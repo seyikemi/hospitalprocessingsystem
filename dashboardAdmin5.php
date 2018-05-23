@@ -6,24 +6,27 @@
         header("Location:Admin.php");
     }
 
-    function allDoctors(){
+    function Messages(){
         global $conn;
-        $output = '';
-        $sql = "SELECT * FROM `doctor_view`";
+        $output = "";
+        $sql = "SELECT * FROM `adminmesage_view`";
         $query = $conn->query($sql);
         $result = $query->fetchAll();
-        foreach ($result as $row) {
-            $output .= '<tr>
-                <th scope="row">'.$row['Doctor_ID'].'</th>
-                <td>'.$row['Doctor_name'].'</td>
-                <td>'.$row['Doctor_email'].'</td>
-                <td>'.$row['Type'].'</td>
-            </tr>';
+        foreach($result as $row){
+            $output .= '
+                 <tr>
+                    <th scope="row">'.$row['staff_ID'].'</th>
+                    <td>'.$row['Question'].'</td>
+                    <td>'.$row['Reply'].'</td>
+                    <td><a href=AdminClass.php?action=seen&id='.$row['FeedbackID'].' class="btn btn-sm  btn-primary pull-right animated shake">Seen</a><td>
+                    <td><td>
+                </tr>
+            ';
         }
         return $output;
     }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -76,7 +79,6 @@
 
                     </ul>
 
-                    <!-- Right -->
                     <ul class="navbar-nav nav-flex-icons">
 
                         <li class="nav-item">
@@ -109,15 +111,15 @@
                     <a href="dashboardAdmin.php" class="list-group-item  waves-effect">
                         <i class="fa fa-pie-chart mr-3"></i>Dashboard
                     </a>
-                    <a href="#" class="list-group-item  active list-group-item-action waves-effect">
+                    <a href="dashboardAdmin2.php" class="list-group-item  list-group-item-action waves-effect">
                         <i class="fa fa-user mr-3"></i>Doctors
                     </a>
-                    <a href="dashboardAdmin3.php" class="list-group-item list-group-item-action waves-effect">
+                    <a href="dashboardAdmin3.php" class="list-group-item  list-group-item-action waves-effect">
                         <i class="fa fa-table mr-3"></i>Staffs</a>
 
-                    <a href="dashboardAdmin4.php" class="list-group-item list-group-item-action waves-effect">
+                    <a href="dashboardAdmin4.php" class="list-group-item  list-group-item-action waves-effect">
                         <i class="fa fa-question mr-3"></i>Questionnaire</a>
-                        <a href="dashboardAdmin5.php" class="list-group-item list-group-item-action waves-effect">
+                        <a href="dashboardAdmin5.php" class="list-group-item active list-group-item-action waves-effect">
                         <i class="fa fa-envelope mr-3"></i>Messages
                     </a>
                     <a href="Admin.php" class="list-group-item list-group-item-action waves-effect">
@@ -145,10 +147,8 @@
                             <h4 class="mb-2 mb-sm-0 pt-1">
                                 <a href=""><?php echo $_SESSION['username']; ?></a>
                                 <span>/</span>
-                                <span>Doctors</span>
+                                <span>Messages</span>
                             </h4>
-
-                            
 
                         </div>
 
@@ -173,48 +173,34 @@
                     <!--Grid column-->
                     <div class="col-md-12 mb-4">
 
-                        <!--Card-->
                         <div class="card">
 
                             <!--Card content-->
-                            <div class="card-body" style="height: 450px; overflow-y: scroll;">
-
-                                <!-- Table  -->
-                                <table class="table table-hover  ">
-                                    <!-- Table head -->
-                                    <thead class="blue-grey lighten-4">
-                                        <h5>Registered Doctors<span><button type = "button" class = "btn-danger btn btn-sm pull-right" data-toggle="modal" data-target="#DeleteModal">Remove Doctor</button></span>
-                                            <span><button type = "button" class = "btn-info btn btn-sm pull-right" data-toggle="modal" data-target="#exampleModal">Create new Doctor</button></span>
-                                        </h5>
+                            <div class="card-body" style="height: 450px; overflow-y: scroll ">
+                                <table class="table table-hover table-fixed" style="overflow-y: scroll; height: 100px;">
+                                    <thead>
                                         <tr>
-                                            <th>#ID</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Type</th>
+                                            <th>Staff ID</th>
+                                            <th>Question</th>
+                                            <th>Reply</th>
+                                            <th></th>
+                                            <th></th>
                                         </tr>
                                     </thead>
-                                    <!-- Table head -->
-
-                                    <!-- Table body -->
                                     <tbody>
-                                            <?php
-                                                echo allDoctors();
-                                            ?>
-                                       
+                                    <?php echo Messages(); ?>
                                     </tbody>
-                                    <!-- Table body -->
                                 </table>
-                                <!-- Table  -->
 
+                                <!-- after adding new question the save becomes enable .....change disable to success -->
+                                    <span><button data-toggle="modal" data-target="#replyModal" class="btn btn-sm  btn-success pull-right animated shake">Reply</button><span>
+                                
                             </div>
 
                         </div>
                         <!--/.Card-->
 
                     </div>
-                    <!--Grid column-->
-
-
                     <!--Grid column-->
 
                 </div>
@@ -226,62 +212,30 @@
         </div>
     </div>
 
-
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Create New Doctor</h5>
+                    <h5 class="modal-title" id="replyModalLabel">Reply</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
-            <form action="AdminClass.php" method="post">
-                <div class="modal-body">
-                    <label>Designated Password</label>
-                    <input type="text" name="pass" class="form-control" placeholder="******" required>
+                <form action="AdminClass.php" method="post">
+                    <div class="modal-body">
+                        <label>Staff ID</label>
+                        <input type="text" name="staffid" class="form-control" placeholder="enter 1,2,3..." required>
+                        <br>
+                        <label>Reply</label><br>
+                        <textarea name="replyid" id="replyid" cols="50" rows="3" required></textarea>
                     <br>
-                    <label>Name</label>
-                    <input type="text" name="name" class="form-control" required>
-                    <br>
-                    <label>Email</label>
-                    <input type="email" name="email" class="form-control" required>
-                    <br>
-                    <label>Type Of Doctor</label>
-                    <input type="text" name="type" class="form-control" required>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-sm  btn-primary" name="addDoc" value="Save changes">
-                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="DeleteModalLabel">Remove Doctor</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-            <form action="AdminClass.php" method="post">
-                <div class="modal-body">
-                    <label>Name</label>
-                    <input type="text" name="name" class="form-control" required>
-                    <br>
-                    <label>Doctor ID</label>
-                    <input type="text" name="id" class="form-control" required>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-sm btn-danger btn-primary" name="deleteDoc" value="YES">
-                    <button type="button" class="btn btn-sm  btn-primary"  data-dismiss="modal">NO</button>
-                </div>
-            </form>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-sm  btn-primary" name="reply" value="Save changes">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
