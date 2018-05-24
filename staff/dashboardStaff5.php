@@ -1,9 +1,9 @@
 <?php
-    require_once('pdo.php');
+    require_once('../scripts/pdo.php');
     session_start();
 
-    if(!isset($_SESSION['doctor'])){
-        header("Location:Doctor.php");
+    if(!isset($_SESSION['staff'])){
+        header("Location:Staff.php");
     }
 
     function allPatients(){
@@ -18,10 +18,10 @@
                             <td>'.$row['Firstname'].' '.$row['Surname'].'</td>
                             <td>'.$row['Phone_number'].'</td>
                             <td>'.$row['Address'].'</td>
-                            <td>'.$row['E-mail'].'</td>
+                            <td>Dr. '.$row['E-mail'].'</td>
                             <td>'.$row['Status'].'</td>
-                            <td><a href=DoctorClass.php?PatientID='.$row['PatientID'].' class="btn btn-sm btn-danger">Delete</a></td>
-                            <td><a href=dashboardDoctor6.php?PatientID='.$row['PatientID'].' class="btn btn-sm btn-success">Patient file</a></td>
+                            <td><a href=StaffClass.php?PatientID='.$row['PatientID'].' class="btn btn-sm btn-danger">Delete</a></td>
+                            <td><a href=dashboardStaff2.php?PatientID='.$row['PatientID'].' class="btn btn-sm btn-success">Patient file</a></td>
                         </tr>
             ';
         }
@@ -36,6 +36,18 @@
         }
         return $numBills;
     }
+
+    function Role(){
+        global $conn;
+        $id = $_SESSION['staff'];
+        $sql = "SELECT * FROM `staff_view` WHERE `Staff_ID` = '$id'";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach($result as $row){
+            $role = $row['Position'];;
+        }
+        return $role;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,11 +60,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="../css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
-    <link href="css/style.min.css" rel="stylesheet">
+    <link href="../css/style.min.css" rel="stylesheet">
 
 </head>
 
@@ -80,7 +92,7 @@
                     <!-- Left -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link waves-effect" href="#">Doctor
+                            <a class="nav-link waves-effect" href="#">Staff
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
@@ -91,7 +103,7 @@
                     <ul class="navbar-nav nav-flex-icons">
 
                         <li class="nav-item">
-                            <a href="Doctor.php" class="nav-link border border-light rounded waves-effect">
+                            <a href="Staff.php" class="nav-link border border-light rounded waves-effect">
                                 <i class="fa fa-arrow-right "></i>Log Out
                             </a>
                         </li>
@@ -117,23 +129,23 @@
         <div class="row">
             <div class="col-lg-3" style="margin-top:5%">
                 <div class="list-group list-group-flush">
-                    <a href="dashboardDoctor.php" class="list-group-item  waves-effect">
+                    <a href="dashboardStaff.php" class="list-group-item  waves-effect">
                         <i class="fa fa-user mr-3"></i>Admitted Patients
                     </a>
-                     <a href="dashboardDoctor5.php" class="list-group-item active waves-effect">
+                     <a href="dashboardStaff5.php" class="list-group-item active waves-effect">
                         <i class="fa fa-user-o mr-3"></i>Patient Record
                     </a>
-                    <a href="dashboardDoctor3.php" class="list-group-item  waves-effect">
-                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"><?= numBills(); ?></span>
+                    <a href="dashboardStaff3.php" class="list-group-item  waves-effect">
+                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"> <?php echo numBills()?> </span>
                     </a>
 
 
-                    <a href="dashboardDoctor4.php" class="list-group-item  list-group-item-action waves-effect">
+                    <a href="dashboardStaff4.php" class="list-group-item  list-group-item-action waves-effect">
                         <i class="fa fa-question mr-3"></i>Questionnaire</a>
-                        <a href="dashboardDoctor7.php" class="list-group-item list-group-item-action waves-effect">
+                        <a href="dashboardStaff7.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-envelope mr-3"></i>Messages
                     </a>
-                    <a href="Doctor.php" class="list-group-item list-group-item-action waves-effect">
+                    <a href="Staff.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-arrow-right mr-3"> Log Out</i>
                     </a>
                 </div>
@@ -142,6 +154,7 @@
                 <section class = "pt-5 text-center">
                     <div class = " white py-3">
                         <a class = "btn btn-primary btn-md" data-toggle="modal" data-target="#AddPatient">Add Patient</a>
+                        <a class = "btn btn-primary btn-danger btn-md" data-toggle="modal" data-target="#RemovePatient">Remove Patient</a>
                         <!--  -->
                     </div>
                 </section>
@@ -164,7 +177,9 @@
                         <div class="card-body d-sm-flex justify-content-between">
 
                             <h4 class="mb-2 mb-sm-0 pt-1">
-                                <a href=""><?php echo $_SESSION['doctor']; ?></a>
+                                <a href=""><?php echo $_SESSION['staff']; ?></a>
+                                <span>/</span>
+                                <span><?= Role() ?></span>
                                 <span>/</span>
                                 <span>Patient Record</span>
                             </h4>
@@ -248,7 +263,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
-            <form action="DoctorClass.php" method="post">
+            <form action="StaffClass.php" method="post">
                 <div class="modal-body">
                     <label>Patient ID</label>
                     <input type="text" name="patientid" class="form-control" required>
@@ -291,7 +306,7 @@
                     <br>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="addPatient1" value="Save">
+                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="addPatientS" value="Save">
                     <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
                 </div>
             </form>
@@ -308,7 +323,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
-            <form action="DoctorClass.php" method="post">
+            <form action="StaffClass.php" method="post">
                 <div class="modal-body">
                     <label>Patient ID</label>
                     <input type="text" name="patientid" class="form-control" required>
@@ -336,13 +351,13 @@
 
 <!-- SCRIPTS -->
 <!-- JQuery -->
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
 <!-- Bootstrap tooltips -->
-<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="../js/popper.min.js"></script>
 <!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
-<script type="text/javascript" src="js/mdb.min.js"></script>
+<script type="text/javascript" src="../js/mdb.min.js"></script>
 <!-- Initializations -->
 <script type="text/javascript">
     // Animations initialization

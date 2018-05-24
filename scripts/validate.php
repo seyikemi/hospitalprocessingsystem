@@ -9,11 +9,11 @@ function adminValidate($username, $password){
     if($query->execute()){
         if($query->fetchColumn() == 0) {
             echo '<script>alert("Invalid Login Details")</script>';
-            echo '<script>window.location="Admin.php"</script>'; 
+            echo '<script>window.location="../admin/Admin.php"</script>'; 
             }else{
                 session_start();
                 $_SESSION['username'] = $username;
-                echo '<script>window.location="DashboardAdmin.php"</script>';
+                echo '<script>window.location="../admin/DashboardAdmin.php"</script>';
             }
     }
 }
@@ -24,20 +24,20 @@ function doctorValidate($username, $password){
     $query = $conn->prepare($sql);
     if(ctype_digit($username)){
         $query->bindValue(':username', $username, PDO::PARAM_STR);
-        $query->bindValue(':pass', $password, PDO::PARAM_STR);
+        $query->bindValue(':pass', md5($password), PDO::PARAM_STR);
         if($query->execute()){
             if($query->fetchColumn() == 0) {
                 echo '<script>alert("Invalid Login Details")</script>';
-                echo '<script>window.location="Doctor.php"</script>'; 
+                echo '<script>window.location="../doctor/Doctor.php"</script>'; 
             }else{
                 session_start();
                 $_SESSION['doctor'] = $username;
-                echo '<script>window.location="dashboardDoctor.php"</script>';
+                echo '<script>window.location="../doctor/dashboardDoctor.php"</script>';
             }
         }
     }else{
         echo '<script>alert("Invalid Login Details")</script>';
-        echo '<script>window.location="Doctor.php"</script>';
+        echo '<script>window.location="../doctor/Doctor.php"</script>';
     }
 }
 
@@ -47,20 +47,20 @@ function staffValidate($username, $password){
     $query = $conn->prepare($sql);
     if(ctype_digit($username)){
         $query->bindValue(':username', $username, PDO::PARAM_STR);
-        $query->bindValue(':pass', $password, PDO::PARAM_STR);
+        $query->bindValue(':pass', md5($password), PDO::PARAM_STR);
         if($query->execute()){
             if($query->fetchColumn() == 0) {
                 echo '<script>alert("Invalid Login Details")</script>';
-                echo '<script>window.location="Staff.php"</script>';  
+                echo '<script>window.location="../staff/Staff.php"</script>';  
             }else{
                 session_start();
                 $_SESSION['staff'] = $username;
-                echo '<script>window.location="dashboardStaff.php"</script>';
+                echo '<script>window.location="../staff/dashboardStaff.php"</script>';
             }
         }
     }else{
         echo '<script>alert("Invalid Login Details")</script>';
-        echo '<script>window.location="Staff.php"</script>';
+        echo '<script>window.location="../staff/Staff.php"</script>';
     }
 }
 

@@ -1,29 +1,37 @@
 <?php
-    require_once('pdo.php');
+    require_once('../scripts/pdo.php');
     session_start();
 
-    if(!isset($_SESSION['username'])){
-        header("Location:Admin.php");
+    if(!isset($_SESSION['doctor'])){
+        header("Location:Doctor.php");
     }
 
     function Messages(){
         global $conn;
         $output = "";
-        $sql = "SELECT * FROM `adminmesage_view`";
+        $staffid = $_SESSION['doctor'];
+        $sql = "SELECT * FROM `staffmessage_view` WHERE `Staff` = '$staffid'";
         $query = $conn->query($sql);
         $result = $query->fetchAll();
         foreach($result as $row){
             $output .= '
                  <tr>
-                    <th scope="row">'.$row['staff_ID'].'</th>
-                    <td>'.$row['Question'].'</td>
-                    <td>'.$row['Reply'].'</td>
-                    <td><a href=AdminClass.php?action=seen&id='.$row['FeedbackID'].' class="btn btn-sm  btn-primary pull-right animated shake">Seen</a><td>
-                    <td><td>
+                    <th scope="row">Admin</th>
+                    <td>'.$row['Content'].'</td>
+                    <td><a href=DoctorClass.php?action=seen&id='.$row['FeedbackID'].' class="btn btn-sm  btn-primary pull-right animated shake">Seen</a><td>
                 </tr>
             ';
         }
         return $output;
+    }
+
+    function numBills(){
+        global $conn;
+        $count = $conn->prepare("SELECT COUNT(*) FROM `billing_view`");
+        if($count->execute()){
+            $numBills = $count->fetchColumn();
+        }
+        return $numBills;
     }
 ?>
 
@@ -38,11 +46,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="../css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
-    <link href="css/style.min.css" rel="stylesheet">
+    <link href="../css/style.min.css" rel="stylesheet">
 
 </head>
 
@@ -71,7 +79,7 @@
                     <!-- Left -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link waves-effect" href="#">Admin
+                            <a class="nav-link waves-effect" href="#">Doctor
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
@@ -82,7 +90,7 @@
                     <ul class="navbar-nav nav-flex-icons">
 
                         <li class="nav-item">
-                            <a href="Admin.php" class="nav-link border border-light rounded waves-effect">
+                            <a href="Doctor.php" class="nav-link border border-light rounded waves-effect">
                                 <i class="fa fa-arrow-right "></i>Log Out
                             </a>
                         </li>
@@ -108,21 +116,23 @@
         <div class="row">
             <div class="col-lg-3" style="margin-top:5%">
                 <div class="list-group list-group-flush">
-                    <a href="dashboardAdmin.php" class="list-group-item  waves-effect">
-                        <i class="fa fa-pie-chart mr-3"></i>Dashboard
+                    <a href="dashboardDoctor.php" class="list-group-item  waves-effect">
+                        <i class="fa fa-user mr-3"></i>Admitted Patients
                     </a>
-                    <a href="dashboardAdmin2.php" class="list-group-item  list-group-item-action waves-effect">
-                        <i class="fa fa-user mr-3"></i>Doctors
+                     <a href="dashboardDoctor5.php" class="list-group-item waves-effect">
+                        <i class="fa fa-user-o mr-3"></i>Patient Record
                     </a>
-                    <a href="dashboardAdmin3.php" class="list-group-item  list-group-item-action waves-effect">
-                        <i class="fa fa-table mr-3"></i>Staffs</a>
+                    <a href="dashboardDoctor3.php" class="list-group-item  waves-effect">
+                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"><?= numBills(); ?></span>
+                    </a>
 
-                    <a href="dashboardAdmin4.php" class="list-group-item  list-group-item-action waves-effect">
+
+                    <a href="dashboardDoctor4.php" class="list-group-item  list-group-item-action waves-effect">
                         <i class="fa fa-question mr-3"></i>Questionnaire</a>
-                        <a href="dashboardAdmin5.php" class="list-group-item active list-group-item-action waves-effect">
+                        <a href="dashboardDoctor7.php" class="list-group-item active list-group-item-action waves-effect">
                         <i class="fa fa-envelope mr-3"></i>Messages
                     </a>
-                    <a href="Admin.php" class="list-group-item list-group-item-action waves-effect">
+                    <a href="Doctor.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-arrow-right mr-3"> Log Out</i>
                     </a>
                 </div>
@@ -145,7 +155,7 @@
                         <div class="card-body d-sm-flex justify-content-between">
 
                             <h4 class="mb-2 mb-sm-0 pt-1">
-                                <a href=""><?php echo $_SESSION['username']; ?></a>
+                                <a href=""><?php echo $_SESSION['doctor']; ?></a>
                                 <span>/</span>
                                 <span>Messages</span>
                             </h4>
@@ -180,10 +190,8 @@
                                 <table class="table table-hover table-fixed" style="overflow-y: scroll; height: 100px;">
                                     <thead>
                                         <tr>
-                                            <th>Staff ID</th>
-                                            <th>Question</th>
-                                            <th>Reply</th>
-                                            <th></th>
+                                            <th>Sender</th>
+                                            <th>Content</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -193,7 +201,6 @@
                                 </table>
 
                                 <!-- after adding new question the save becomes enable .....change disable to success -->
-                                    <span><button data-toggle="modal" data-target="#replyModal" class="btn btn-sm  btn-success pull-right animated shake">Reply</button><span>
                                 
                             </div>
 
@@ -212,33 +219,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="replyModalLabel">Reply</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <form action="AdminClass.php" method="post">
-                    <div class="modal-body">
-                        <label>Staff ID</label>
-                        <input type="text" name="staffid" class="form-control" placeholder="enter 1,2,3..." required>
-                        <br>
-                        <label>Reply</label><br>
-                        <textarea name="replyid" id="replyid" cols="50" rows="3" required></textarea>
-                    <br>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="submit" class="btn btn-sm  btn-primary" name="reply" value="Save changes">
-                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
 </body>
 
 </footer>
@@ -246,13 +227,13 @@
 
 <!-- SCRIPTS -->
 <!-- JQuery -->
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
 <!-- Bootstrap tooltips -->
-<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="../js/popper.min.js"></script>
 <!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
-<script type="text/javascript" src="js/mdb.min.js"></script>
+<script type="text/javascript" src="../js/mdb.min.js"></script>
 <!-- Initializations -->
 <script type="text/javascript">
     // Animations initialization

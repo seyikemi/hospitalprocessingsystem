@@ -1,29 +1,27 @@
 <?php
-    require_once('pdo.php');
+    require_once('../scripts/pdo.php');
     session_start();
 
     if(!isset($_SESSION['doctor'])){
         header("Location:Doctor.php");
     }
 
-    function allAdmissions(){
+    function allPatients(){
         global $conn;
-        $did = $_SESSION['doctor'];
         $output = '';
-        $sql = "SELECT * FROM `admission_view` WHERE `Doctor_assignedID` = '$did'";
+        $sql = "SELECT * FROM `patient_view`";
         $query = $conn->query($sql);
         $result = $query->fetchAll();
         foreach($result as $row){
             $output .= '<tr>
-                            <th scope="row">'.$row['addmissionID'].'</th>
-                            <td>'.$row['patientID'].'</td>
+                            <th scope="row">'.$row['PatientID'].'</th>
                             <td>'.$row['Firstname'].' '.$row['Surname'].'</td>
-                            <td>'.$row['Date_admitted'].'</td>
-                            <td>'.$row['Admitting_staff'].'</td>
-                            <td>Dr. '.$row['Doctor_assigned'].'</td>
-                            <td>'.$row['Last_doctor_assigned'].'</td>
-                            <td><a href=DoctorClass.php?admissionid='.$row['addmissionID'].'&patientid='.$row['patientID'].' class="btn btn-sm btn-danger">Checkout</a></td>
-                            <td><a href=dashboardDoctor2.php?admissionid='.$row['addmissionID'].'&patientid='.$row['patientID'].' class="btn btn-sm btn-success">Patient file</a></td>
+                            <td>'.$row['Phone_number'].'</td>
+                            <td>'.$row['Address'].'</td>
+                            <td>'.$row['E-mail'].'</td>
+                            <td>'.$row['Status'].'</td>
+                            <td><a href=DoctorClass.php?PatientID='.$row['PatientID'].' class="btn btn-sm btn-danger">Delete</a></td>
+                            <td><a href=dashboardDoctor6.php?PatientID='.$row['PatientID'].' class="btn btn-sm btn-success">Patient file</a></td>
                         </tr>
             ';
         }
@@ -50,11 +48,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="../css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
-    <link href="css/style.min.css" rel="stylesheet">
+    <link href="../css/style.min.css" rel="stylesheet">
 
 </head>
 
@@ -119,10 +117,10 @@
         <div class="row">
             <div class="col-lg-3" style="margin-top:5%">
                 <div class="list-group list-group-flush">
-                    <a href="dashboardDoctor.php" class="list-group-item active waves-effect">
+                    <a href="dashboardDoctor.php" class="list-group-item  waves-effect">
                         <i class="fa fa-user mr-3"></i>Admitted Patients
                     </a>
-                     <a href="dashboardDoctor5.php" class="list-group-item waves-effect">
+                     <a href="dashboardDoctor5.php" class="list-group-item active waves-effect">
                         <i class="fa fa-user-o mr-3"></i>Patient Record
                     </a>
                     <a href="dashboardDoctor3.php" class="list-group-item  waves-effect">
@@ -144,14 +142,7 @@
                 <section class = "pt-5 text-center">
                     <div class = " white py-3">
                         <a class = "btn btn-primary btn-md" data-toggle="modal" data-target="#AddPatient">Add Patient</a>
-                        <button class = "btn btn-primary btn-md" data-toggle="modal" data-target="#AdmitPatient">Admit Patient</button>
-                    </div>
-                </section>
-
-                <section class = "pt-5 text-center">
-                    <div class = " white py-3">
-                        <a class = "btn btn-primary btn-md" data-toggle="modal" data-target="#BillPatient">Bill a Patient</a>
-                        <a class = "btn btn-primary btn-md" data-toggle="modal" data-target="#TransferPatient">Transfer Patient</a>
+                        <!--  -->
                     </div>
                 </section>
             </div>
@@ -211,13 +202,12 @@
                                     <!--Table head-->
                                     <thead>
                                         <tr>
-                                            <th>Admitted ID</th>
                                             <th>#Patient ID</th>
                                             <th>Full Name</th>
-                                            <th>Date Admitted</th>
-                                            <th>Admitting Staff</th>
-                                            <th>Doctor on Seat</th>
-                                            <th>Last Doctor Assigned</th>
+                                            <th>Phone Number</th>
+                                            <th>Address</th>
+                                            <th>E-mail</th>
+                                            <th>Status</th>
                                             <th></th>
                                             <th></th>
 
@@ -227,7 +217,7 @@
 
                                     <!--Table body-->
                                     <tbody>
-                                        <?php echo allAdmissions() ?>
+                                        <?php echo allPatients(); ?>
                                     </tbody>
                                     <!--Table body-->
 
@@ -301,117 +291,44 @@
                     <br>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="addPatient" value="Save">
+                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="addPatient1" value="Save">
                     <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
                 </div>
             </form>
             </div>
         </div>
     </div>
-
-        <!--Admit patient modal-->
-    <div class="modal fade" id="AdmitPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!--Remove patient modal-->
+    <div class="modal fade" id="RemovePatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="AdmitPatientLabel">Admit Patient</h5>
+                    <h5 class="modal-title" id="RemovePatientLabel">Remove Patient</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
             <form action="DoctorClass.php" method="post">
                 <div class="modal-body">
-                    <label>Admission ID</label>
-                    <input type="text" name="admissionid" class="form-control" required>
-                    <br>
                     <label>Patient ID</label>
                     <input type="text" name="patientid" class="form-control" required>
-                    <input type="hidden" name="date_admitted" value="<?php echo date('Y-m-d') ?>">
-                    <input type="hidden" name="admitting_staff" value="<?php echo $_SESSION['doctor']; ?>">
                     <br>
-                    <label>Doctor Assigned</label>
-                    <input type="text" name="doctorassigned" class="form-control" required>
+                    <label>Firstname</label>
+                    <input type="text" name="Fname" class="form-control" >
+                    <br>
+                    <label>Lastname</label>
+                    <input type="text" name="Lname" class="form-control" >
                     <br>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="admitPatient" value="Admit">
-                    <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-sm btn-danger btn-primary" name="removePatient" value="Remove">
+                    <button type="button" class="btn btn-sm btn-primary"  data-dismiss="modal">Close</button>
                 </div>
             </form>
             </div>
         </div>
     </div>
 
-        <!--Bill patient modal-->
-        <div class="modal fade" id="BillPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="BillPatientLabel">Bill Patient</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-            <form action="DoctorClass.php" method="post">
-                <div class="modal-body">
-                    <label>Bill ID</label>
-                    <input type="text" name="billid" class="form-control" required>
-                    <br>
-                    <label>Admission ID</label>
-                    <input type="text" name="aid" class="form-control" required>
-                    <br>
-                    <label>Bill Summary</label>
-                    <input type="text" name="bs" class="form-control" required>
-                    <br>
-                    <label>Amount Payable</label>
-                    <input type="text" name="apay" class="form-control" required>
-                    <br>
-                    <label>Due Date</label>
-                    <input type="date" name="ddu" class="form-control" required>
-                    <br>
-                    <input type="hidden" name="issuer" value="<?php echo $_SESSION['doctor']; ?>">
-                    <input type="hidden" name="date_issued" value="<?php echo date('Y-m-d') ?>">
-                    <input type="hidden" name="status" value="Not Paid">
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="billPatient" value="Save">
-                    <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
-                </div>
-            </form>
-            </div>
-        </div>
-    </div>
-
-<!-- Transfer Patient -->
-<div class="modal fade" id="TransferPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="TransferPatientLabel">Transfer Patient</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-            <form action="DoctorClass.php" method="post">
-                <div class="modal-body">
-                    <label>Admission ID</label>
-                    <input type="text" name="admissionid" class="form-control" required>
-                    <input type="hidden" name="date_admitted" value="<?php echo date('Y-m-d') ?>">
-                    <input type="hidden" name="last_admitting_staff" value="<?php echo $_SESSION['doctor']; ?>">
-                    <br>
-                    <label>Doctor Assigned ID</label>
-                    <input type="text" name="doctorassigned" class="form-control" required>
-                    <br>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="transferPatient" value="Admit">
-                    <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
-                </div>
-            </form>
-            </div>
-        </div>
-    </div>
-    
 </body>
 
 </footer>
@@ -419,13 +336,13 @@
 
 <!-- SCRIPTS -->
 <!-- JQuery -->
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
 <!-- Bootstrap tooltips -->
-<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="../js/popper.min.js"></script>
 <!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
-<script type="text/javascript" src="js/mdb.min.js"></script>
+<script type="text/javascript" src="../js/mdb.min.js"></script>
 <!-- Initializations -->
 <script type="text/javascript">
     // Animations initialization

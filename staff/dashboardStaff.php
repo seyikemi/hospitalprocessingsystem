@@ -1,5 +1,5 @@
 <?php
-    require_once('pdo.php');
+    require_once('../scripts/pdo.php');
     session_start();
 
     if(!isset($_SESSION['staff'])){
@@ -29,6 +29,18 @@
         return $output;
     }
 
+    function Role(){
+        global $conn;
+        $id = $_SESSION['staff'];
+        $sql = "SELECT * FROM `staff_view` WHERE `Staff_ID` = '$id'";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach($result as $row){
+            $role = $row['Position'];;
+        }
+        return $role;
+    }
+
     function numBills(){
         global $conn;
         $count = $conn->prepare("SELECT COUNT(*) FROM `billing_view`");
@@ -50,11 +62,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="../css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
-    <link href="css/style.min.css" rel="stylesheet">
+    <link href="../css/style.min.css" rel="stylesheet">
 
 </head>
 
@@ -167,7 +179,7 @@
                             <h4 class="mb-2 mb-sm-0 pt-1">
                                 <a href=""><?php echo $_SESSION['staff']; ?></a>
                                 <span>/</span>
-                                <span>Nurse</span>
+                                <span><?= Role() ?></span>
                                 <span>/</span>
                                 <span>Patient Record</span>
                             </h4>
@@ -343,13 +355,13 @@
 
 <!-- SCRIPTS -->
 <!-- JQuery -->
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
 <!-- Bootstrap tooltips -->
-<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="../js/popper.min.js"></script>
 <!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
-<script type="text/javascript" src="js/mdb.min.js"></script>
+<script type="text/javascript" src="../js/mdb.min.js"></script>
 <!-- Initializations -->
 <script type="text/javascript">
     // Animations initialization

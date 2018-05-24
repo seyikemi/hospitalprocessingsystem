@@ -1,28 +1,26 @@
 <?php
-require_once("pdo.php");
+    require_once('../scripts/pdo.php');
     session_start();
 
     if(!isset($_SESSION['staff'])){
         header("Location:Staff.php");
     }
 
-    function allQuestionaire(){
+    function Messages(){
         global $conn;
-        $staff = $_SESSION['staff'];
-        $output = '';
-        $sql = "SELECT * FROM `questioniare`";
+        $output = "";
+        $staffid = $_SESSION['staff'];
+        $sql = "SELECT * FROM `staffmessage_view` WHERE `Staff` = '$staffid'";
         $query = $conn->query($sql);
         $result = $query->fetchAll();
-        foreach ($result as $row) {
+        foreach($result as $row){
             $output .= '
-            <form action="StaffClass.php" method="post">
-                        <p>'.$row['ID'].'. '.$row["Question"].'</p>
-                        <input type="text" name="reply" class="form-control" required>
-                        </textarea>
-                        <input type="hidden" name="id" value='.$row['ID'].'>
-                        <input type="hidden" name="doc" value='.$staff.'>
-                        <input type="submit" class="btn btn-sm  btn-info pull-right" name="submitQ" value="Save & Send">
-                        </form>';
+                 <tr>
+                    <th scope="row">Admin</th>
+                    <td>'.$row['Content'].'</td>
+                    <td><a href=StaffClass.php?action=seen&id='.$row['FeedbackID'].' class="btn btn-sm  btn-primary pull-right animated shake">Seen</a><td>
+                </tr>
+            ';
         }
         return $output;
     }
@@ -35,6 +33,18 @@ require_once("pdo.php");
         }
         return $numBills;
     }
+
+    function Role(){
+        global $conn;
+        $id = $_SESSION['staff'];
+        $sql = "SELECT * FROM `staff_view` WHERE `Staff_ID` = '$id'";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach($result as $row){
+            $role = $row['Position'];;
+        }
+        return $role;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -44,15 +54,15 @@ require_once("pdo.php");
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Hospital Processing</title>
+    <title>Hospital Processing App</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="../css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
-    <link href="css/style.min.css" rel="stylesheet">
+    <link href="../css/style.min.css" rel="stylesheet">
 
 </head>
 
@@ -121,17 +131,17 @@ require_once("pdo.php");
                     <a href="dashboardStaff.php" class="list-group-item  waves-effect">
                         <i class="fa fa-user mr-3"></i>Admitted Patients
                     </a>
-                    <a href="dashboardStaff5.php" class="list-group-item  waves-effect">
-                        <i class="fa fa-user-o mr-3"></i>Patient Records
+                     <a href="dashboardStaff5.php" class="list-group-item waves-effect">
+                        <i class="fa fa-user-o mr-3"></i>Patient Record
                     </a>
                     <a href="dashboardStaff3.php" class="list-group-item  waves-effect">
-                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"> <?php echo numBills()?> </span>
+                        <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"><?= numBills(); ?></span>
                     </a>
 
 
-                    <a href="dashboardStaff4.php" class="list-group-item active list-group-item-action waves-effect">
+                    <a href="dashboardStaff4.php" class="list-group-item  list-group-item-action waves-effect">
                         <i class="fa fa-question mr-3"></i>Questionnaire</a>
-                        <a href="dashboardStaff7.php" class="list-group-item list-group-item-action waves-effect">
+                        <a href="dashboardStaff7.php" class="list-group-item active list-group-item-action waves-effect">
                         <i class="fa fa-envelope mr-3"></i>Messages
                     </a>
                     <a href="Staff.php" class="list-group-item list-group-item-action waves-effect">
@@ -139,7 +149,6 @@ require_once("pdo.php");
                     </a>
                 </div>
             </div>
-
 
 
 
@@ -160,7 +169,9 @@ require_once("pdo.php");
                             <h4 class="mb-2 mb-sm-0 pt-1">
                                 <a href=""><?php echo $_SESSION['staff']; ?></a>
                                 <span>/</span>
-                                <span>Questionnaire</span>
+                                <span><?= Role() ?></span>
+                                <span>/</span>
+                                <span>Messages</span>
                             </h4>
 
                         </div>
@@ -190,12 +201,21 @@ require_once("pdo.php");
 
                             <!--Card content-->
                             <div class="card-body" style="height: 450px; overflow-y: scroll ">
+                                <table class="table table-hover table-fixed" style="overflow-y: scroll; height: 100px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Sender</th>
+                                            <th>Content</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php echo Messages(); ?>
+                                    </tbody>
+                                </table>
 
+                                <!-- after adding new question the save becomes enable .....change disable to success -->
                                 
-                                    <?php echo allQuestionaire(); ?>
-
-
-
                             </div>
 
                         </div>
@@ -212,6 +232,7 @@ require_once("pdo.php");
             </main>
         </div>
     </div>
+
 </body>
 
 </footer>
@@ -219,20 +240,24 @@ require_once("pdo.php");
 
 <!-- SCRIPTS -->
 <!-- JQuery -->
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
 <!-- Bootstrap tooltips -->
-<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="../js/popper.min.js"></script>
 <!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
-<script type="text/javascript" src="js/mdb.min.js"></script>
+<script type="text/javascript" src="../js/mdb.min.js"></script>
 <!-- Initializations -->
 <script type="text/javascript">
     // Animations initialization
     new WOW().init();
 </script>
 
+<!-- Charts -->
 
+
+<!--Google Maps-->
+<script src="https://maps.google.com/maps/api/js"></script>
 
 
 </body>

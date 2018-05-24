@@ -1,24 +1,29 @@
 <?php
-    require_once('pdo.php');
+    require_once('../scripts/pdo.php');
     session_start();
 
     if(!isset($_SESSION['doctor'])){
         header("Location:Doctor.php");
     }
 
-    function Messages(){
+    function allBills(){
         global $conn;
         $output = "";
-        $staffid = $_SESSION['doctor'];
-        $sql = "SELECT * FROM `staffmessage_view` WHERE `Staff` = '$staffid'";
+        $sql = "SELECT * FROM `billing_view`";
         $query = $conn->query($sql);
         $result = $query->fetchAll();
         foreach($result as $row){
             $output .= '
                  <tr>
-                    <th scope="row">Admin</th>
-                    <td>'.$row['Content'].'</td>
-                    <td><a href=DoctorClass.php?action=seen&id='.$row['FeedbackID'].' class="btn btn-sm  btn-primary pull-right animated shake">Seen</a><td>
+                    <th scope="row">'.$row['patientID'].'</th>
+                    <td>'.$row['Firstname'].'</td>
+                    <td>'.$row['Surname'].'</td>
+                    <td>'.$row['Mobile_number'].'</td>
+                    <td>'.$row['Contact_address'].'</td>
+                    <td>'.$row['date_due'].'</td>
+                    <td class="red-text">N'.$row['amount_payable'].'</td>
+                    <td><a data-toggle="modal" data-target="#RemindPatient" class="btn btn-sm btn-danger">Send Reminder</a></td>
+                    <td><a href=DoctorClass.php?action=clear&billingID='.$row['billingID'].'&admissionID='.$row['admissionID'].' class="btn btn-sm btn-primary">Clear Bill</a></td>
                 </tr>
             ';
         }
@@ -33,6 +38,43 @@
         }
         return $numBills;
     }
+    
+    function remainderLetter(){
+        global $conn;
+        $output = "";
+        $sql = "SELECT * FROM `billing_view`";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach($result as $row){
+            $output .= '
+                <p class="pull-left red-text" id="admissionid">'.$row['admissionID'].'</p>
+                                <p class="pull-right red-text" id="patientid">'.$row['patientID'].'</p>
+                                <h3 class="text-center blue-text pb-3">Payment Reminder</h3>
+                                <p>Date:<span class="red-text pl-3">'.date('Y-m-d').'</span> </p>
+                                <h3 class="text-center blue-text pb-3">'.$row['Firstname'].' '.$row['Surname'].'</h3>
+                                    <div>
+                                        <address class="black-text">'.$row['Contact_address'].'
+                                            <p>'.$row['Email'].'</p>
+                                            <p>'.$row['Mobile_number'].'</p>
+                                        </address>
+                            <p>Dear '.$row['Firstname'].' '.$row['Surname'].'</p>
+
+                                    </div>
+                                    <div>
+                                        <p>You have an outstanding bill '.$row['Summary'].' valued at N'.$row['amount_payable'].' to be paid on or before '.$row['date_due'].'</p>
+                                        <p>Please ensure to pay your blls</p>
+                                    </div>
+                                    <div>
+                                        <p>Yours Sincerely</p>
+                                        <p>Akoka Medical Centre</span> </p>
+                                        <p>No 234, Univeristy road, Akoka</p>
+                                        <p>0903356132</p>
+                                        <p>info@akokamedical.com</p>
+                                    </div>
+            ';
+        }
+        return $output;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -42,19 +84,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Hospital Processing App</title>
+    <title>Hospital management</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="../css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
-    <link href="css/style.min.css" rel="stylesheet">
+    <link href="../css/style.min.css" rel="stylesheet">
 
 </head>
 
-<body class="grey lighten-3" style="overflow: hidden;">
+<body class="grey lighten-3">
 
     <!--Main Navigation-->
     <header>
@@ -64,8 +106,7 @@
             <div class="container-fluid">
 
                 <!-- Brand -->
-                <a class="navbar-brand waves-effect" href="#">
-                    <strong class="blue-text">Hospital Processing App</strong>
+                <a class="navbar-brand waves-effect" href="#"> <strong class="blue-text">Hospital Processing App</strong>
                 </a>
 
                 <!-- Collapse -->
@@ -116,20 +157,20 @@
         <div class="row">
             <div class="col-lg-3" style="margin-top:5%">
                 <div class="list-group list-group-flush">
-                    <a href="dashboardDoctor.php" class="list-group-item  waves-effect">
+                    <a href="dashboardDoctor.php" class="list-group-item waves-effect">
                         <i class="fa fa-user mr-3"></i>Admitted Patients
                     </a>
-                     <a href="dashboardDoctor5.php" class="list-group-item waves-effect">
-                        <i class="fa fa-user-o mr-3"></i>Patient Record
+                    <a href="dashboardDoctor5.php" class="list-group-item waves-effect">
+                        <i class="fa fa-user-o mr-3"></i>Patient Records
                     </a>
-                    <a href="dashboardDoctor3.php" class="list-group-item  waves-effect">
+                    <a href="dashboardDoctor3.php" class="list-group-item active  waves-effect">
                         <i class="fa fa-money mr-3"></i>Bills <span class="badge badge-pill red pull-right"><?= numBills(); ?></span>
                     </a>
 
 
                     <a href="dashboardDoctor4.php" class="list-group-item  list-group-item-action waves-effect">
                         <i class="fa fa-question mr-3"></i>Questionnaire</a>
-                        <a href="dashboardDoctor7.php" class="list-group-item active list-group-item-action waves-effect">
+                        <a href="dashboardDoctor7.php" class="list-group-item list-group-item-action waves-effect">
                         <i class="fa fa-envelope mr-3"></i>Messages
                     </a>
                     <a href="Doctor.php" class="list-group-item list-group-item-action waves-effect">
@@ -157,8 +198,11 @@
                             <h4 class="mb-2 mb-sm-0 pt-1">
                                 <a href=""><?php echo $_SESSION['doctor']; ?></a>
                                 <span>/</span>
-                                <span>Messages</span>
+
+                                <span>Bill Record</span>
                             </h4>
+
+                            
 
                         </div>
 
@@ -182,30 +226,42 @@
 
                     <!--Grid column-->
                     <div class="col-md-12 mb-4">
-
                         <div class="card">
+                            <div class="card-body">
 
-                            <!--Card content-->
-                            <div class="card-body" style="height: 450px; overflow-y: scroll ">
-                                <table class="table table-hover table-fixed" style="overflow-y: scroll; height: 100px;">
+                                <!--Table-->
+                                <table class="table table-hover table-fixed" style="overflow-y: scroll; height: 500px;">
+
+                                    <!--Table head-->
                                     <thead>
                                         <tr>
-                                            <th>Sender</th>
-                                            <th>Content</th>
+                                            <th>#Patient ID</th>
+                                            <th>First name</th>
+                                            <th>Surname</th>
+                                            <th>Phone number</th>
+                                            <th>Address</th>
+                                            <th>Due Date of Payment</th>
+                                            <th>Amount</th>
                                             <th></th>
+
+
                                         </tr>
                                     </thead>
+                                    <!--Table head-->
+
+                                    <!--Table body-->
                                     <tbody>
-                                    <?php echo Messages(); ?>
+                                        <?= allBills(); ?>
+
+
                                     </tbody>
+                                    <!--Table body-->
+
                                 </table>
+                                <!--Table-->
 
-                                <!-- after adding new question the save becomes enable .....change disable to success -->
-                                
                             </div>
-
                         </div>
-                        <!--/.Card-->
 
                     </div>
                     <!--Grid column-->
@@ -219,33 +275,29 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!--Remainder modal-->
+    <div class="modal fade" id="RemindPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="replyModalLabel">Reply</h5>
+                    <h5 class="modal-title" id="RemindPatientLabel">Remainder</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
-                <form action="AdminClass.php" method="post">
-                    <div class="modal-body">
-                        <label>Staff ID</label>
-                        <input type="text" name="staffid" class="form-control" placeholder="enter 1,2,3..." required>
-                        <br>
-                        <label>Reply</label><br>
-                        <textarea name="replyid" id="replyid" cols="50" rows="3" required></textarea>
-                    <br>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="submit" class="btn btn-sm  btn-primary" name="reply" value="Save changes">
-                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </form>
+            <form action="DoctorClass.php?action=reminder" method="post">
+                <div class="modal-body">
+                    <?php echo remainderLetter(); ?>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="remindPatient" value="Send">
+                    <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
+                </div>
+            </form>
             </div>
         </div>
     </div>
+
 </body>
 
 </footer>
@@ -253,24 +305,19 @@
 
 <!-- SCRIPTS -->
 <!-- JQuery -->
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
 <!-- Bootstrap tooltips -->
-<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="../js/popper.min.js"></script>
 <!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
-<script type="text/javascript" src="js/mdb.min.js"></script>
+<script type="text/javascript" src="../js/mdb.min.js"></script>
 <!-- Initializations -->
 <script type="text/javascript">
     // Animations initialization
     new WOW().init();
 </script>
 
-<!-- Charts -->
-
-
-<!--Google Maps-->
-<script src="https://maps.google.com/maps/api/js"></script>
 
 
 </body>
