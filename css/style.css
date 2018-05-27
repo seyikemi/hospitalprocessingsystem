@@ -4,6 +4,10 @@
     bottom:0 ;
     left:0;
     right:0;
+<<<<<<< HEAD
+=======
+    margin-bottom: 5%;
+>>>>>>> e74a331fef6b42358ff05bd87eb70bfb40349e60
 }
 
 /* Required for full background image */
@@ -12,7 +16,11 @@ html,
 body,
 header,
 .view {
+<<<<<<< HEAD
   height: 100%;
+=======
+  
+>>>>>>> e74a331fef6b42358ff05bd87eb70bfb40349e60
 }
 
 @media (max-width: 740px) {
@@ -54,4 +62,7 @@ header,
 h6 {
   line-height: 1.7;
 }
+<<<<<<< HEAD
                 
+=======
+>>>>>>> e74a331fef6b42358ff05bd87eb70bfb40349e60
