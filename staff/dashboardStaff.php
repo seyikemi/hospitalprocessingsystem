@@ -3,7 +3,7 @@
     session_start();
 
     if(!isset($_SESSION['staff'])){
-        header("Location:Staff.php");
+        header("Location:../web/index.html");
     }
 
     function allAdmissions(){
@@ -157,6 +157,11 @@
                     <div class = " white py-3">
                         <a class = "btn btn-primary btn-md" data-toggle="modal" data-target="#AddPatient">Add Patient</a>
                         <button class = "btn btn-primary btn-md" data-toggle="modal" data-target="#AdmitPatient">Admit Patient</button>
+                    </div>
+                </section>
+                <section class = "pt-5 text-center">
+                    <div class = " white py-3">
+                        <a class = "btn btn-primary btn-md" data-toggle="modal" data-target="#BillPatient">Bill a Patient</a>
                     </div>
                 </section>
             </div>
@@ -340,6 +345,45 @@
                 </div>
                 <div class="modal-footer">
                     <input type="submit" class="btn btn-sm btn-success btn-primary" name="admitPatient" value="Admit">
+                    <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    <!--Bill patient modal-->
+        <div class="modal fade" id="BillPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="BillPatientLabel">Bill Patient</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+            <form action="StaffClass.php" method="post">
+                <div class="modal-body">
+                    <label>Bill ID</label>
+                    <input type="text" name="billid" class="form-control" required>
+                    <br>
+                    <label>Admission ID</label>
+                    <input type="text" name="aid" class="form-control" required>
+                    <br>
+                    <label>Bill Summary</label>
+                    <input type="text" name="bs" class="form-control" required>
+                    <br>
+                    <label>Amount Payable</label>
+                    <input type="text" name="apay" class="form-control" required>
+                    <br>
+                    <label>Due Date</label>
+                    <input type="date" name="ddu" class="form-control" required>
+                    <br>
+                    <input type="hidden" name="issuer" value="<?php echo $_SESSION['staff']; ?>">
+                    <input type="hidden" name="date_issued" value="<?php echo date('Y-m-d') ?>">
+                    <input type="hidden" name="status" value="Not Paid">
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="billPatient" value="Save">
                     <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
                 </div>
             </form>

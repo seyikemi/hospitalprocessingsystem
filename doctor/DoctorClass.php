@@ -313,7 +313,7 @@
             'ddu' => $ddu,
             'status' => $status
         );
-        Bill($input); 
+        $doctorObj->Bill($input); 
     }
 
     if(isset($_GET['action'])){

@@ -3,7 +3,7 @@
     session_start();
 
     if(!isset($_SESSION['doctor'])){
-        header("Location:Doctor.php");
+        header("Location:../web/index.html");
     }
 
     if(isset($_GET['PatientID'])){
@@ -190,11 +190,12 @@
                 </div>
                 <div class="white px-3 py-3 mt-4 ">
                     <label>Can't Rememnber something, then google it</label>
-                    <input type="search" name="" class="form-control" placeholder="find...">
+                    <form method="get" action="https://www.google.com/search" target="_blank">
+                    <input type="search" name="q" class="form-control" placeholder="find...">
                     <div class="text-center">
-                        <button class="btn-warning btn btn-md ">Search</button>
+                        <input type="submit" class="btn-warning btn btn-md " value="Search">
                     </div>
-
+                    </form>
                 </div>
             </div>
 

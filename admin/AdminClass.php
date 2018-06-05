@@ -22,15 +22,19 @@
         }
 
         if(isset($_POST['deleteDoc'])){
-            $name = $_POST['name'];
-            $id = $_POST['id'];
-            $adminObj->deleteDoctor($name, $id);
+            $checkbox = $_POST['check'];
+            for($i=0;$i<count($checkbox);$i++){
+                $del_id = $checkbox[$i]; 
+                $adminObj->deleteDoctor($del_id);
+            }
         }
 
         if(isset($_POST['deleteStaff'])){
-            $name = $_POST['name'];
-            $id = $_POST['id'];
-            $adminObj->deleteStaff($name, $id);
+            $checkbox = $_POST['check'];
+            for($i=0;$i<count($checkbox);$i++){
+                $del_id = $checkbox[$i]; 
+                $adminObj->deleteStaff($del_id);
+            }
         }
 
         if(isset($_POST['addQuest'])){

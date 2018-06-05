@@ -3,7 +3,7 @@
     session_start();
 
     if(!isset($_SESSION['username'])){
-        header("Location:Admin.php");
+        header("Location:../web/index.html");
     }
 
     function allStaffs(){
@@ -18,6 +18,23 @@
                 <td>'.$row['Staff_name'].'</td>
                 <td>'.$row['Staff_email'].'</td>
                 <td>'.$row['Position'].'</td>
+            </tr>';
+        }
+        return $output;
+    }
+
+    function delStaff(){
+         global $conn;
+        $output = '';
+        $sql = "SELECT * FROM `staff_view`";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach ($result as $row) {
+            $output .= '<tr>
+                <td><input type="checkbox" id="checkItem" name="check[]" value='.$row["Staff_ID"].'></td>
+                <th scope="row">'.$row['Staff_ID'].'</th>
+                <td>'.$row['Staff_name'].'</td>
+                <td>'.$row['Staff_email'].'</td>
             </tr>';
         }
         return $output;
@@ -39,7 +56,7 @@
     <!-- Material Design Bootstrap -->
     <link href="../css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
-    <link href="../css/style.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
 
 </head>
 
@@ -265,11 +282,24 @@
                 </div>
             <form action="AdminClass.php" method="post">
                 <div class="modal-body">
-                    <label>Name</label>
-                    <input type="text" name="name" class="form-control" required>
-                    <br>
-                    <label>Staff ID</label>
-                    <input type="text" name="id" class="form-control" required>
+                <table class="table table-hover  ">
+                                    <!-- Table head -->
+                                    <thead class="blue-grey lighten-4">
+                                        <tr>
+                                            <th><input type="checkbox" id="checkAl"> Select All</th>
+                                            <th>#ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                        </tr>
+                                    </thead>
+                                    <!-- Table head -->
+
+                                    <!-- Table body -->
+                                    <tbody>
+                                            <?= delStaff(); ?>
+                                    </tbody>
+                                    <!-- Table body -->
+                                </table>
                 </div>
                 <div class="modal-footer">
                     <input type="submit" class="btn btn-sm btn-danger btn-primary" name="deleteStaff" value="YES">
@@ -297,6 +327,10 @@
 <script type="text/javascript">
     // Animations initialization
     new WOW().init();
+
+    $("#checkAl").click(function () {
+        $('input:checkbox').not(this).prop('checked', this.checked);
+    });
 </script>
 
 <!-- Charts -->

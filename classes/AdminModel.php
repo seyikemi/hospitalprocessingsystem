@@ -22,13 +22,12 @@
             }else{echo "Ntorr!";}
         }
 
-        function deleteDoctor($name, $id){
+        function deleteDoctor($id){
             global $conn;
-            $sql = "DELETE FROM `employee` WHERE `employee`.`Employee_ID` = :id AND `employee`.`Employee_name` = :name";
+            $sql = "DELETE FROM `employee` WHERE `employee`.`Employee_ID` = :id";
             $query = $conn->prepare($sql);
             $input = array(
-                'id' => $id,
-                'name' => $name
+                'id' => $id
             );
             if($query->execute($input)){
                 echo "<script>window.location='../admin/dashboardAdmin2.php'</script>";
@@ -51,13 +50,12 @@
             }else{echo "Ntorr!";}
         }
 
-        function deleteStaff($name, $id){
+        function deleteStaff($id){
             global $conn;
-            $sql = "DELETE FROM `employee` WHERE `employee`.`Employee_ID` = :id AND `employee`.`Employee_name` = :name";
+            $sql = "DELETE FROM `employee` WHERE `employee`.`Employee_ID` = :id";
             $query = $conn->prepare($sql);
             $input = array(
-                'id' => $id,
-                'name' => $name
+                'id' => $id
             );
             if($query->execute($input)){
                 echo "<script>window.location='../admin/dashboardAdmin3.php'</script>";

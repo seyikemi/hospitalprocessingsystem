@@ -337,12 +337,7 @@
             echo "<script>window.location='dashboardStaff3.php'</script>";
         }
 
-    if(isset($_POST['transferPatient'])){
-        $admission = $_POST['admissionid'];
-        $doctor = $_POST['doctorassigned'];
-        $last = $_POST['last_admitting_staff'];
-        $staffObj->transfer($admission, $doctor, $last);
-    }
+ 
 
     if(isset($_POST['submitQ'])){
         $qid = $_POST['id'];

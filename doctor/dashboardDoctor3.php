@@ -3,7 +3,7 @@
     session_start();
 
     if(!isset($_SESSION['doctor'])){
-        header("Location:Doctor.php");
+        header("Location:../web/index.html");
     }
 
     function allBills(){

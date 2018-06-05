@@ -132,6 +132,7 @@ class StaffModel{
             echo "<script>window.location='../staff/dashboardStaff4.php'</script>";
         }
     }
+    
 
 }
 ?>

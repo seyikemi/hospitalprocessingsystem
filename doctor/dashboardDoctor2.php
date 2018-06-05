@@ -3,7 +3,7 @@
     session_start();
 
     if(!isset($_SESSION['doctor'])){
-        header("Location:Doctor.php");
+        header("Location:../web/index.html");
     }
 
     if(isset($_GET['admissionid'])){
@@ -237,8 +237,9 @@
                         <input type="submit" class="btn-warning btn btn-md " value="Search">
                     </div>
                     </form>
-                </div>
+                </div>    
             </div>
+
 
 
 

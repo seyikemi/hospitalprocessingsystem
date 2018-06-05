@@ -3,7 +3,7 @@
     session_start();
 
     if(!isset($_SESSION['username'])){
-        header("Location:Admin.php");
+        header("Location:../web/index.html");
     }
 
     function allDoctors(){
@@ -18,6 +18,23 @@
                 <td>'.$row['Doctor_name'].'</td>
                 <td>'.$row['Doctor_email'].'</td>
                 <td>'.$row['Type'].'</td>
+            </tr>';
+        }
+        return $output;
+    }
+
+    function delDoctors(){
+        global $conn;
+        $output = '';
+        $sql = "SELECT * FROM `doctor_view`";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach ($result as $row) {
+            $output .= '<tr>
+                <td><input type="checkbox" id="checkItem" name="check[]" value='.$row["Doctor_ID"].'></td>
+                <th scope="row">'.$row['Doctor_ID'].'</th>
+                <td>'.$row['Doctor_name'].'</td>
+                <td>'.$row['Doctor_email'].'</td>
             </tr>';
         }
         return $output;
@@ -271,11 +288,24 @@
                 </div>
             <form action="AdminClass.php" method="post">
                 <div class="modal-body">
-                    <label>Name</label>
-                    <input type="text" name="name" class="form-control" required>
-                    <br>
-                    <label>Doctor ID</label>
-                    <input type="text" name="id" class="form-control" required>
+                <table class="table table-hover  ">
+                                    <!-- Table head -->
+                                    <thead class="blue-grey lighten-4">
+                                        <tr>
+                                            <th><input type="checkbox" id="checkAl"> Select All</th>
+                                            <th>#ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                        </tr>
+                                    </thead>
+                                    <!-- Table head -->
+
+                                    <!-- Table body -->
+                                    <tbody>
+                                            <?= delDoctors(); ?>
+                                    </tbody>
+                                    <!-- Table body -->
+                                </table>
                 </div>
                 <div class="modal-footer">
                     <input type="submit" class="btn btn-sm btn-danger btn-primary" name="deleteDoc" value="YES">
@@ -303,6 +333,10 @@
 <script type="text/javascript">
     // Animations initialization
     new WOW().init();
+
+    $("#checkAl").click(function () {
+        $('input:checkbox').not(this).prop('checked', this.checked);
+    });
 </script>
 
 <!-- Charts -->

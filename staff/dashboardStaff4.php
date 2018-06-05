@@ -3,7 +3,7 @@ require_once("../scripts/pdo.php");
     session_start();
 
     if(!isset($_SESSION['staff'])){
-        header("Location:Staff.php");
+        header("Location:../web/index.html");
     }
 
     function allQuestionaire(){

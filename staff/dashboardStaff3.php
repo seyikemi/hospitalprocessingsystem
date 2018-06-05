@@ -3,7 +3,7 @@
     session_start();
 
     if(!isset($_SESSION['staff'])){
-        header("Location:Staff.php");
+        header("Location:../web/index.html");
     }
 
     function allBills(){
@@ -283,6 +283,28 @@
                 <!--Grid row-->
             </div>
             </main>
+        </div>
+    </div>
+
+    <div class="modal fade" id="RemindPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="RemindPatientLabel">Remainder</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+            <form action="DoctorClass.php?action=reminder" method="post">
+                <div class="modal-body">
+                    <?php echo remainderLetter(); ?>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-sm btn-success btn-primary" name="remindPatient" value="Send">
+                    <button type="button" class="btn btn-sm btn-danger btn-primary"  data-dismiss="modal">Close</button>
+                </div>
+            </form>
+            </div>
         </div>
     </div>
 </body>
