@@ -38,6 +38,19 @@
         }
         return $numBills;
     }
+
+    function getPatient(){
+        global $conn;
+        $output = '';
+        $sql = "SELECT * FROM `patient_view`";
+        $query = $conn->query($sql);
+        $result = $query->fetchAll();
+        foreach($result as $row){
+            $output .= '<option value='.$row['PatientID'].'>'.$row['PatientID'].' - '.$row['Firstname'].' '.$row['Surname'].'</option>
+            ';
+        }
+        return $output;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -325,7 +338,9 @@
                     <input type="text" name="admissionid" class="form-control" required>
                     <br>
                     <label>Patient ID</label>
-                    <input type="text" name="patientid" class="form-control" required>
+                    <select class="form-control" id="exampleFormControlSelect1" name="patientid">
+                        <?= getPatient() ?>
+                    </select>
                     <input type="hidden" name="date_admitted" value="<?php echo date('Y-m-d') ?>">
                     <input type="hidden" name="admitting_staff" value="<?php echo $_SESSION['doctor']; ?>">
                     <br>
